@@ -8,6 +8,9 @@ rmpath(genpath(curPath));
 addpath(genpath(curPath));
 cd(curPath);
 
+%% NEED TO ADD HELPER
+
+
 warning on
 globalresult = [];
 blPlot = false;
