@@ -1,3 +1,4 @@
+%% test to checkout translation trick of Larsson (2019)
 close all; clearvars; clc;
 
 w = [1 3 4];

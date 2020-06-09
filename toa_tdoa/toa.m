@@ -9,7 +9,7 @@ r = [25 20 15];
 combinations = nchoosek(1:length(xc),2)';
 % find some color
 cols = colormap("hsv");
-colsidx = round(linspace(1,length(cols)-50,length(combinations)));
+colsidx = round(linspace(1,length(cols)-20,length(combinations)));
 cols = cols(colsidx,:);
 
 global colcnt; colcnt = 1;
@@ -22,7 +22,9 @@ for nCb = combinations % binomial coeff combinations
     intersectionLineCircle(xc(nCb),yc(nCb),r(nCb),currcol,h_cir)
     colcnt = colcnt + 1;
 end
-axis equal; set(h,'Visible','on')
+axis equal; set(h,'Visible','on');
+grid on; grid minor;
+xlabel('x-coordinates'); ylabel('y-coordinates');
 
 MatrixMiddle(xc,yc,r)
 hold off;

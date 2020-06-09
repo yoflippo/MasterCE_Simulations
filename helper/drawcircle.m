@@ -1,4 +1,4 @@
-function h = drawcircle(x,y,rad,color,lineth)
+function h = drawcircle(x,y,rad,color,lineth,centresymbol)
 %
 % ------------------------------------------------------------------------
 %    Copyright (C) 2020  M. Schrauwen (markschrauwen@gmail.com)
@@ -50,6 +50,9 @@ if not(exist('lineth','var'))
 else
     lw = lineth;
 end
+if not(exist('centresymbol','var'))
+   centresymbol = '^'; 
+end
 
 p = 0:pi/100:2*pi;
 xcor = rad * cos(p) + x;
@@ -58,11 +61,11 @@ ycor = rad * sin(p) + y;
 if not(exist('color','var'))
     h = plot(xcor, ycor,'Linewidth',lw);
     hold on;
-    plot(x,y,'+','Linewidth',round(lw/2),'MarkerSize',15);
+    h = plot(x,y,'^','Linewidth',round(lw/2),'MarkerSize',20);
 else
     h = plot(xcor, ycor,'Color',color,'Linewidth',lw);
     hold on;
-    plot(x,y,'Color',color,'Marker','+','Linewidth',round(lw/2),'MarkerSize',15);
+    h = plot(x,y,'Color','b','Marker',centresymbol,'Linewidth',3,'MarkerSize',10); 
 end
 axis equal
 end %function
