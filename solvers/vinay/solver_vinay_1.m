@@ -2,13 +2,7 @@
 
 function locations = solver_vinay_1(distances,ancloc)
 
-newton_non_linear(distances,ancloc);
-
-
-%% Create some help variables
-
-
-%% Calculate location
+locations = newton_non_linear(distances,ancloc);
 
 %% ============================== Nested functions ==============================
     function out = newton_non_linear(r,a)
@@ -17,7 +11,7 @@ newton_non_linear(distances,ancloc);
         rint = loc;
         for i = 1:50
             if not(det(good.jtj)==0)
-                rfinal = rint - (inv(good.jtj)*good.jtf);
+                rfinal = rint - (inv(good.jtj)*good.jtf');
             else
                 rfinal = rint - (pinv(good.jtj)*good.jtf);
             end
@@ -29,6 +23,7 @@ newton_non_linear(distances,ancloc);
             good = jtjf(rfinal);
             rint = rfinal;
         end
+        out = rfinal;
     end
 
     function out  = jtjf(loc)
@@ -48,15 +43,15 @@ newton_non_linear(distances,ancloc);
             var = (loc(1)-ancloc(i,1))*(loc(2)-ancloc(i,2)) / normjtjf(fv,i);
             s3 = s3 + var;
         end
-        out.jtj = [s1 s2; s2 s3];
+        out.jtj = [s1 s3; s3 s2];
         
         for i = 1:3
-            var = ((loc(1)-ancloc(i,1))*fv(i))^2 / sqrt(normjtjf(fv,i));
+            var = ((loc(1)-ancloc(i,1))*fv(i)) / (fv(i)+distances(i));
             s4 = s4 + var;
         end
         
         for i = 1:3
-            var = (loc(1)-ancloc(i,1))*(loc(2)-ancloc(i,2)) / sqrt(normjtjf(fv,i));
+            var = (loc(2)-ancloc(i,2))*fv(i) / (fv(i)+distances(i));
             s5 = s5 + var;
         end
         
@@ -68,9 +63,9 @@ newton_non_linear(distances,ancloc);
     end
 
     function out = fi(loc)
-        out(1) = sqrt((loc(1)-ancloc(1,1))^2 + (loc(2)-ancloc(1,2))^2 - distances(1));
-        out(2) = sqrt((loc(1)-ancloc(2,1))^2 + (loc(2)-ancloc(2,2))^2 - distances(2));
-        out(3) = sqrt((loc(1)-ancloc(3,1))^2 + (loc(2)-ancloc(3,2))^2 - distances(3));
+        out(1) = sqrt((loc(1)-ancloc(1,1))^2 + (loc(2)-ancloc(1,2))^2) - distances(1);
+        out(2) = sqrt((loc(1)-ancloc(2,1))^2 + (loc(2)-ancloc(2,2))^2) - distances(2);
+        out(3) = sqrt((loc(1)-ancloc(3,1))^2 + (loc(2)-ancloc(3,2))^2) - distances(3);
     end
 
     function loc = linearsystem(r,a) %only use the first 3 anchors just as Vinay did
@@ -87,7 +82,7 @@ newton_non_linear(distances,ancloc);
             v = inv(DE)*DB; % uses the pseudo inverse, TODO: check in murphy documentation
         else
             p = pinv(A);
-            v = p*B;
+            v = p*B';
         end
         loc = v + a(1,:)';
     end

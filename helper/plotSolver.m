@@ -1,5 +1,5 @@
 
-function plotSolver(fn,result,markerColor,markerType,displayName,lineWidth)
+function plotSolver(fn,result,markerColor,markerType,displayName,lineWidth,blNewFigure)
 if ~exist('markerColor','var')
     markerColor = 'g';
 end
@@ -12,6 +12,9 @@ end
 if ~exist('lineWidth','var')
     lineWidth = 1;
 end
+if ~exist('blNewFigure','var')
+    blNewFigure = false;
+end
 
 nameFigure = [replace(fn,'.mat','') '.fig'];
 [~, figFileNameFigureToOpen] = fileparts(nameFigure);
@@ -22,7 +25,7 @@ if ~isempty(figH)
     [~, figFileNameCurrent] = fileparts(figH.FileName);
 end
 
-if ~isequal(figFileNameFigureToOpen,figFileNameCurrent)
+if ~isequal(figFileNameFigureToOpen,figFileNameCurrent) || blNewFigure
     open(nameFigure);
 end
 

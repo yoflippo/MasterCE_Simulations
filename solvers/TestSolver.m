@@ -2,8 +2,11 @@ function TestSolver(funhandle,name)
 
 mfilename('fullpath')
 curPath = fileparts(mfilename('fullpath'));
+apHelper = fullfile(extractBefore(curPath,'SIMULATION'),'SIMULATION','helper');
 rmpath(genpath(curPath));
 addpath(genpath(curPath));
+rmpath(genpath(apHelper));
+addpath(genpath(apHelper));
 cd(curPath);
 
 % Find .mat files with dummy data
