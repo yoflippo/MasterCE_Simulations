@@ -1,6 +1,6 @@
-function error = getErrorDistances(anchors,PosClean,PosDirty)
+function error = getErrorDistances(anchors,clean,dirty)
 nA = size(anchors,1);
-nT = length(PosClean);
-difference = dis(anchors,PosClean)-dis(anchors,PosDirty);
-error = round((sum(difference(:).^2)/(nA*nT)),1);-am
+nT = length(clean);
+difference = dis(anchors,clean)-dis(anchors,dirty);
+error = round((sum(difference(:).^2)/(nA*nT)),1);
 end
