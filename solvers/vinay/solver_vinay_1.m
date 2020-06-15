@@ -13,7 +13,7 @@ locations = newton_non_linear(distances,ancloc);
             if not(det(good.jtj)==0)
                 rfinal = rint - (inv(good.jtj)*good.jtf');
             else
-                rfinal = rint - (pinv(good.jtj)*good.jtf);
+                rfinal = rint - (pinv(good.jtj)*good.jtf');
             end
             rdiff = abs(rfinal-rint);
             if rdiff(1)<0.0000001 && rdiff(2)<0.0000001

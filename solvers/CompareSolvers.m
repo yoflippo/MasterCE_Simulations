@@ -42,10 +42,10 @@ for i = 1:numberOfPlotsToOpen
     
     %% With noise
     if blUWBnoise
-        data.Distances = createUWBNoise(data.Distances,10);
+        data.DistancesWithNoise = createUWBNoise(data.Distances,20);
         name.noise = 'UWB-noise';
     else
-        data.Distances = createNoise(data.Distances);
+        data.DistancesWithNoise = addGaussianNoise(data.Distances);
         name.noise = 'Gaussian-noise';
     end
     
@@ -60,10 +60,10 @@ for i = 1:numberOfPlotsToOpen
     %% Calculate errors
     % Difference between calculated positions and their distance to the
     % anchors MINUS the measured distances
-    result.error.fun1.Pos.clean{i} = getErrorDistancesPosition(data.AnchorPositions,data.Distances,result.fun1.locations.clean{i});
-    result.error.fun2.Pos.clean{i} = getErrorDistancesPosition(data.AnchorPositions,data.Distances,result.fun2.locations.clean{i});
-    result.error.fun1.Pos.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.Distances,result.fun1.locations.noise{i});
-    result.error.fun2.Pos.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.Distances,result.fun2.locations.noise{i});
+    result.error.fun1.Pos.clean{i} = getErrorDistancesPosition(data.AnchorPositions,data.DistancesWithNoise,result.fun1.locations.clean{i});
+    result.error.fun2.Pos.clean{i} = getErrorDistancesPosition(data.AnchorPositions,data.DistancesWithNoise,result.fun2.locations.clean{i});
+    result.error.fun1.Pos.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.DistancesWithNoise,result.fun1.locations.noise{i});
+    result.error.fun2.Pos.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.DistancesWithNoise,result.fun2.locations.noise{i});
     
     %     result.error.DiffLocations.clean1(i) = getErrorLocations(data.TagPositions,res.fun1.locations.clean);
     %     result.error.DiffLocations.clean2(i) = getErrorLocations(data.TagPositions,res.fun2.locations.clean);

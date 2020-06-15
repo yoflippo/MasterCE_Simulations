@@ -1,3 +1,4 @@
+function error = getErrorDistancesPosition(anchors,measuredDistances,calculatedPositionTag)
 % GETERRORDISTANCESPOSITION The difference between the distances 
 % measurement and distance anchor-calculated tag position
 %
@@ -26,7 +27,7 @@
 % It signifies how a solver is able to approximate the measured position of
 % a tag
 
-function error = getErrorDistancesPosition(anchors,measuredDistances,calculatedPositionTag)
+
 nA = size(anchors,1);
 nT = size(measuredDistances,1);
 calculatedDistances = dis(anchors,calculatedPositionTag);
