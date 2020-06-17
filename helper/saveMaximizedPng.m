@@ -1,5 +1,5 @@
-function outVar = PercentageChange(num1,ref)
-% PROCENTUALDIFFERENCE 
+function saveMaximizedPng(handleFigure,nameWithoutExtension)
+% SAVEMAXIMIZEDPNG <short description>
 %
 % ------------------------------------------------------------------------
 %    Copyright (C) 2020  M. Schrauwen (markschrauwen@gmail.com)
@@ -17,13 +17,12 @@ function outVar = PercentageChange(num1,ref)
 %    You should have received a copy of the GNU General Public License
 %    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 % ------------------------------------------------------------------------
-% 
 
-% $Revision: 0.0.0 $  $Date: 2020-05-03 $
-% Creation of this function.
 
-outVar = 100*((num1(:)-ref(:)) ./ ref(:));
-if size(num1) ~= size(outVar)
-    outVar = outVar';
+% $Revisi0n: 0.0.0 $  $Date: 2020-06-15 $
+%<Description>
+handleFigure.WindowState = 'maximized';
+saveas(handleFigure,[nameWithoutExtension '.png']);
+figure(handleFigure,'Visible','off');
 end
-end %function
+

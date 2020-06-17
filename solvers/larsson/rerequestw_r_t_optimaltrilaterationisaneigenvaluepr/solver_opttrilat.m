@@ -6,7 +6,7 @@ if nargin < 4
     use_eigenvector = 1;
 end
 
-n = size(s0,1);
+n = size(s0,1); %MS: n = 3
 d = d(:); %MS: d(:) makes one big row
 if nargin < 3 || isempty(w)
     w = 1./d.^2;
@@ -36,7 +36,7 @@ AM = [-D diag(-bb) zeros(n,1);
 
 if use_eigenvector
     [VV,DD] = eig(AM);
-    VV = VV ./ (ones(2*n+1,1)*VV(end,:));
+    VV = VV ./ (ones(2*n+1,1)*VV(end,:)); %MS: normalisation
     r = V*VV(n+1:2*n,:);
 else
     DD = eig(AM);

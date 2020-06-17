@@ -30,6 +30,7 @@ for i = 1:numberOfPlotsToOpen
     result.name2 = name2;
     fn = matfiles(i).name;
     load(fn);
+    [~,nameLoadedMat] = fileparts(fn);
     
     %% Clean
     dur = tic;
@@ -45,7 +46,7 @@ for i = 1:numberOfPlotsToOpen
         data.Distances = createUWBNoise(data.Distances,20);
         name.noise = 'UWB-noise';
     else
-        data.Distances = addGaussianNoise(data.Distances);
+        data.Distances = addGaussianNoise(data.Distances,5);
         name.noise = 'Gaussian-noise';
     end
     
@@ -94,7 +95,8 @@ for i = 1:numberOfPlotsToOpen
             legend(f(or(contains({f.DisplayName},name1),contains({f.DisplayName},name2))),'Location','best')
             
             if blSavePlot
-                export_fig(gcf,[mfilename num2str(i) '.png'],'-transparent','-r300');
+                %                 export_fig(gcf,[mfilename num2str(i) '_' nameLoadedMat '_CLEAN.png'],'-transparent','-r300');
+                saveas(gcf,[mfilename num2str(i) '_' nameLoadedMat '_CLEAN.png']);
             end
         else
             % WITH NOISE
@@ -121,7 +123,8 @@ for i = 1:numberOfPlotsToOpen
             legend(f(or(contains({f.DisplayName},name1),contains({f.DisplayName},name2))),'Location','best')
             
             if blSavePlot
-                export_fig(gcf,[mfilename num2str(i) '.png'],'-transparent','-r300');
+                %                 export_fig(gcf,[mfilename num2str(i) '_' nameLoadedMat '_NOISE.png'],'-transparent','-r300');
+                saveas(gcf,[mfilename num2str(i) '_' nameLoadedMat '_NOISE.png']);
             end
         end
         pause(0.2);

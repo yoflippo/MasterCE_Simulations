@@ -10,6 +10,7 @@ addpath(genpath(curPath));
 rmpath(genpath(apHelper));
 addpath(genpath(apHelper));
 cd(curPath);
+% cd('dummy_data')
 
 %% NEED TO ADD HELPER
 
@@ -19,14 +20,15 @@ globalresult = [];
 blPlot = false;
 blPlotClean = false;
 blSavePlot= false;
-blUWBnoise = true;
-
+blUWBnoise = false;
+numAnchors = 'Colinear';
 % results = CompareSolvers(@executeLarssonTrilateration, 'Larsson',@executeFabertMultiLateration2,'Faber2',blPlot,blSavePlot,blUWBnoise,blPlotClean);
 % results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeFabertMultiLateration2a,'Faber2a',blPlot,blSavePlot,blUWBnoise,blPlotClean);
 % results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeFabertMultiLateration2b,'Faber2b',blPlot,blSavePlot,blUWBnoise,blPlotClean);
 % results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeFabertMultiLateration9,'Faber9',blPlot,blSavePlot,blUWBnoise,blPlotClean);
 
 results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeVinay1,'Vinay',blPlot,blSavePlot,blUWBnoise,blPlotClean);
+% results = CompareSolvers(@executeFabertMultiLateration2a,'Faber2a',@executeVinay1,'Vinay',blPlot,blSavePlot,blUWBnoise,blPlotClean);
 
 %% Distances (simulation)
 % figure
@@ -40,9 +42,11 @@ results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeVinay1,'
 figure
 pdif = PercentageChange([results.error.fun1.Dist.noise{:}],[results.error.fun2.Dist.noise{:}]);
 bar(pdif);
-title(['Sum error: ' num2str(round(sum(pdif),1)) ', mean error: ' num2str(round(mean(pdif),1))]);
-ylabel('Procentual Error')
-xlabel('Different setups'); grid on; grid minor;
+title([results.name1 ' compared to ' results.name2 ' (\mu_{error} = ' num2str(round(mean(pdif),1)) ') ' numAnchors ],'Interpreter','tex');
+ylabel('Percentage Change')
+xlabel('Simulations'); grid on; grid minor;
+saveas(gcf,[numAnchors 'anchors_' results.name1 '_compared_to_' results.name2 '_DistanceClean.png']);
+
 
 %% Positional (practical)
 % figure
@@ -56,9 +60,10 @@ xlabel('Different setups'); grid on; grid minor;
 figure
 pdif = PercentageChange([results.error.fun1.Pos.noise{:}],[results.error.fun2.Pos.noise{:}]);
 bar(pdif);
-title(['Sum error: ' num2str(round(sum(pdif),1)) ', mean error: ' num2str(round(mean(pdif),1))]);
-ylabel('Procentual Error')
+title([results.name1 ' compared to ' results.name2 ' (\mu_{error} = ' num2str(round(mean(pdif),1)) ') ' numAnchors],'Interpreter','tex');
+ylabel('Percentage Change')
 xlabel('Simulations'); grid on; grid minor;
+saveas(gcf,[numAnchors 'anchors_' results.name1 '_compared_to_' results.name2 '_Position.png']);
 
 % %% Duration
 % figure
