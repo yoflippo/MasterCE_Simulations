@@ -42,6 +42,9 @@ if str2double(ver(1:4)) < 2018
 end
 clear ver
 
+currPath = mfilename('fullpath');
+cd(fileparts(currPath));
+
 %% Some script variables
 data.DateTimeOfCreation = char(datetime('now','Format','yyMMddHHmmss'));
 
@@ -68,7 +71,7 @@ close all;
         if ~exist('nameOut','var')
             nameOut = '';
         end
-        nameOutput =['dummy_data' filesep mfilename '_'   data.DateTimeOfCreation '_' nameOut];
+        nameOutput =['..' filesep 'dummy_data' filesep mfilename '_'   data.DateTimeOfCreation '_' nameOut];
         set(gca,'ButtonDownFcn','')
         saveas(gcf,nameOutput)
         data.TagPositions = tagPattern;

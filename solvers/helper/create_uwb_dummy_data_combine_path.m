@@ -19,6 +19,8 @@ cd(fileparts(currPath));
 cd ..
 cd('dummy_data');
 files = dir('*.mat');
+rmdir(['..' filesep 'dummy_data_sets'],'s');
+mkdir(['..' filesep 'dummy_data_sets'])
 
 Files.Anchor = files(contains({files.name}','anchors'));
 Files.Path = files(contains({files.name}','path'));
@@ -36,7 +38,7 @@ for nP = 1:length(Files.Path)
         load(currAnchorFile);
         plot(data.AnchorPositions(:,1), data.AnchorPositions(:,2), 'bv', 'MarkerSize', 8,'LineWidth',3,'DisplayName','Anchor');
         axis('auto xy')
-        nameOutput =['..' filesep mfilename '_' num2str(counter) '_' data.DateTimeOfCreation ];
+        nameOutput =['..' filesep 'dummy_data_sets' filesep mfilename '_' num2str(counter) '_' data.DateTimeOfCreation ];
         counter = counter + 1;
         
         %% CONCATENATE STRUCTS

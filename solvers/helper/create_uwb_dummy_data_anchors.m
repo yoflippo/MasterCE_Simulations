@@ -42,29 +42,39 @@ if str2double(ver(1:4)) < 2018
 end
 clear ver
 
+currPath = mfilename('fullpath');
+cd(fileparts(currPath));
+cd ..
+cd('dummy_data');
+
 %% Some script variables
 AnchorLocations = [];
 repCounter = 1;
 data.DateTimeOfCreation = char(datetime('now','Format','yyMMddHHmmss'));
 
 %% Create figure
-hFig = figure('WindowState','maximized');
-setFigure();
+for i = 0
+    hFig = figure('WindowState','maximized');
+    setFigure();
+    
+    %% Draw anchors
+    yline = 400;
+    AnchorLocations = [-600 -600;600 -600;-600 600;600 600;];
+    nameCurr = ['4anc_' num2str(i)];
+    data.nameCurr = nameCurr;
+    
+    % % TRIANGLE
+%     [AnchorLocations(:,1), AnchorLocations(:,2)] = topTriangle(0,1000);
+%     % nameCurr = ['Triangle' num2str(posA/2)];
+%     % data.nameCurr = nameCurr;
+    
+    nameOutput =[mfilename '_' data.DateTimeOfCreation '_' nameCurr];
+    hp = plot(AnchorLocations(:,1), AnchorLocations(:,2), 'bv', 'MarkerSize', 8,'LineWidth',3,'DisplayName','Anchor');
+    pause(0.1);
+    saveData(nameOutput)
+    close all;
+end
 
-%% Draw anchors
-posA = 1600;
-% SQUARE
-center = 300;
-AnchorLocations = [-600 400; 0 center; 600 400];
-nameCurr = ['_colin_' num2str(center)];
-data.nameCurr = nameCurr;
-
-% % TRIANGLE
-% [AnchorLocations(:,1), AnchorLocations(:,2)] = topTriangle(0,posA);
-% nameCurr = ['Triangle' num2str(posA/2)];
-% data.nameCurr = nameCurr;
-
-hp = plot(AnchorLocations(:,1), AnchorLocations(:,2), 'bv', 'MarkerSize', 8,'LineWidth',3,'DisplayName','Anchor');
 
 %% Callback functions
 
@@ -76,7 +86,7 @@ hp = plot(AnchorLocations(:,1), AnchorLocations(:,2), 'bv', 'MarkerSize', 8,'Lin
         end
         if isequal(evnt.Key,'escape')
             nameOutput =['.' filesep mfilename '_' nameCurr];
-%             nameOutput =['.' filesep 'dummy_data' filesep mfilename '_' data.DateTimeOfCreation nameCurr];
+            %             nameOutput =['.' filesep 'dummy_data' filesep mfilename '_' data.DateTimeOfCreation nameCurr];
             saveas(gcf,nameOutput);
             saveData(nameOutput)
             close all;
@@ -102,7 +112,7 @@ hp = plot(AnchorLocations(:,1), AnchorLocations(:,2), 'bv', 'MarkerSize', 8,'Lin
     function setFigure()
         clf;
         set(hFig,'WindowKeyPressFcn',@KeyPressFcn);
-        axis([-1000 1000 -1000 1000]);
+        axis([-1500 1500 -1500 1500]);
         hAxis = gca;
         hAxis.XAxisLocation = 'origin'; hAxis.YAxisLocation = 'origin';
         grid on; grid minor; hold on;
