@@ -1,4 +1,4 @@
-function CompareSolversRun(numAnchors)
+function CompareSolversRun(alg1,alg2,numAnchors)
 
 close all;
 clc;
@@ -23,29 +23,39 @@ xlab = 'Anchors-Tag setups';
 blPlot = false;
 blPlotClean = false;
 blSavePlot= false;
-blUWBnoise = false;
+blUWBnoise = true;
 blDuration = false;
 
+concatmethods = lower([alg1
+switch lower(methods)
+    case 'larssonvinay'
+        results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeVinay1,'Vinay',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
+    case
 % results = CompareSolvers(@executeLarssonTrilateration, 'Larsson',@executeFabertMultiLateration2,'Faber2',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
 % results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeFabertMultiLateration2a,'Faber2a',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
 % results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeFabertMultiLateration2b,'Faber2b',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
 % results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeFabertMultiLateration9,'Faber9',blPlot,blSavePlot,blUWBnoise,blPlotClean),blDuration);
-results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeVinay1,'Vinay',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
-% results = CompareSolvers(@executeFabertMultiLateration2a,'Faber2a',@executeVinay1,'Vinay',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
 
-stat.infostr.plot = [results.name1 ' compared to ' results.name2 ', ' stat.strnumanchors ' Anchors,' stat.noisetype ];
+% results = CompareSolvers(@executeFabertMultiLateration2a,'Faber2a',@executeVinay1,'Vinay',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
+    otherwise
+        disp([mfilename ': NOTHING TO DO']);
+end
+
+stat.infostr.plot = [results.name1 ' compared to ' results.name2 ', ' stat.strnumanchors ' Anchors, ' stat.noisetype ];
 stat.infostr.file = replace(stat.infostr.plot,' ','_');
-stat.infostr.file = replace(stat.infostr.file,',','');
+stat.infostr.file = replace(stat.infostr.file,',','_');
+stat.infostr.file = replace(stat.infostr.file,'__','_');
 
 %% Distances (simulation)
 if not(blDuration)
-    % figure('Position',[400 400 800 600])
-    % bar([[results.error.fun1.Dist.noise{:}]; [results.error.fun2.Dist.noise{:}]]')
-    % legend(results.name1,results.name2,'Location','best')
-    % title(['Sum distance errors ' results.name1 ': ' num2str(round(sum([results.error.fun1.Dist.noise{:}]),1)) ', ' ...
-    %     results.name2 ': ' num2str(round(sum([results.error.fun2.Dist.noise{:}]),1))]);
-    % ylabel('Error')
-    %     xlabel(xlab); grid on; grid minor;
+    figure('Position',[400 400 800 600])
+    bar([[results.error.fun1.Dist.noise{:}]; [results.error.fun2.Dist.noise{:}]]')
+    legend(results.name1,results.name2,'Location','best')
+    title(['Sum distance errors ' results.name1 ': ' num2str(round(sum([results.error.fun1.Dist.noise{:}]),1)) ', ' ...
+        results.name2 ': ' num2str(round(sum([results.error.fun2.Dist.noise{:}]),1))]);
+    ylabel('Error')
+    xlabel(xlab); grid on; grid minor;
+    saveas(gcf,[apOutput stat.infostr.file '_DistanceNoise.png']);
     
     figure('Position',[400 400 800 600])
     pdif = PercentageChange([results.error.fun1.Dist.noise{:}],[results.error.fun2.Dist.noise{:}]);
@@ -53,7 +63,7 @@ if not(blDuration)
     title([stat.infostr.plot ' (\mu = ' num2str(round(mean(pdif),1)) ')'],'Interpreter','tex');
     xlabel(xlab); grid on; grid minor;
     ylabel('%');
-    saveas(gcf,[apOutput stat.infostr.file '_DistanceClean_P.png']);
+    saveas(gcf,[apOutput stat.infostr.file '_DistanceNoise_P.png']);
     
     
     %% Positional (practical)
@@ -65,13 +75,13 @@ if not(blDuration)
     % ylabel('Error')
     %     xlabel(xlab); grid on; grid minor;
     
-    figure('Position',[400 400 800 600])
-    pdif = PercentageChange([results.error.fun1.Pos.noise{:}],[results.error.fun2.Pos.noise{:}]);
-    bar(pdif);
-    title([stat.infostr.plot ' (\mu = ' num2str(round(mean(pdif),1)) ')'],'Interpreter','tex');
-    xlabel(xlab); grid on; grid minor;
-    ylabel('%');
-    saveas(gcf,[apOutput stat.infostr.file '_Position_P.png']);
+    %     figure('Position',[400 400 800 600])
+    %     pdif = PercentageChange([results.error.fun1.Pos.noise{:}],[results.error.fun2.Pos.noise{:}]);
+    %     bar(pdif);
+    %     title([stat.infostr.plot ' (\mu = ' num2str(round(mean(pdif),1)) ')'],'Interpreter','tex');
+    %     xlabel(xlab); grid on; grid minor;
+    %     ylabel('%');
+    %     saveas(gcf,[apOutput stat.infostr.file '_Position_P.png']);
 else
     %% Duration
     figure('Position',[400 400 800 600])

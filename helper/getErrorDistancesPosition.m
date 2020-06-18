@@ -1,4 +1,4 @@
-function error = getErrorDistancesPosition(anchors,measuredDistances,calculatedPositionTag)
+function error = getErrorDistancesPosition(AnchorPos,measuredDistances,CalculatedTagPos)
 % GETERRORDISTANCESPOSITION The difference between the distances 
 % measurement and distance anchor-calculated tag position
 %
@@ -28,9 +28,9 @@ function error = getErrorDistancesPosition(anchors,measuredDistances,calculatedP
 % a tag
 
 
-nA = size(anchors,1);
+nA = size(AnchorPos,1);
 nT = size(measuredDistances,1);
-calculatedDistances = dis(anchors,calculatedPositionTag);
+calculatedDistances = dis(AnchorPos,CalculatedTagPos);
 if isequal(size(measuredDistances),size(calculatedDistances))
     difference = measuredDistances-calculatedDistances;
 else

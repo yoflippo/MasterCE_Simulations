@@ -1,5 +1,3 @@
-
-function error = getErrorLocations(clean,dirty)
-error = round((sum(dis(clean,dirty).^2)/length(clean)),1); 
-%% (distance - measured distance )^2
+function error = getErrorLocations(CleanPositions,DirtyPositions)
+error = round((sum(dis(CleanPositions,DirtyPositions).^2)/length(CleanPositions)),1); 
 end

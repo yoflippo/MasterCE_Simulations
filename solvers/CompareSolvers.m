@@ -65,9 +65,11 @@ for i = 1:numberOfPlotsToOpen
         
         % With noise
         if blUWBnoise
+            data.DistancesClean = data.Distances;
             data.Distances = createUWBNoise(data.Distances,20);
             name.noise = 'UWB-noise';
         else
+            data.DistancesClean = data.Distances;
             data.Distances = addGaussianNoise(data.Distances,1);
             name.noise = 'Gaussian-noise';
         end
@@ -77,20 +79,20 @@ for i = 1:numberOfPlotsToOpen
         %% Calculate errors
         % Difference between calculated positions and their distance to the
         % anchors MINUS the measured distances
-        result.error.fun1.Pos.clean{i} = getErrorDistancesPosition(data.AnchorPositions,data.Distances,result.fun1.locations.clean{i});
-        result.error.fun2.Pos.clean{i} = getErrorDistancesPosition(data.AnchorPositions,data.Distances,result.fun2.locations.clean{i});
-        result.error.fun1.Pos.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.Distances,result.fun1.locations.noise{i});
-        result.error.fun2.Pos.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.Distances,result.fun2.locations.noise{i});
-        
-        %     result.error.DiffLocations.clean1(i) = getErrorLocations(data.TagPositions,res.fun1.locations.clean);
-        %     result.error.DiffLocations.clean2(i) = getErrorLocations(data.TagPositions,res.fun2.locations.clean);
-        %     result.error.DiffLocations.noise1(i) = getErrorLocations(data.TagPositions,res.fun1.locations.noise);
-        %     result.error.DiffLocations.noise2(i) = getErrorLocations(data.TagPositions,res.fun2.locations.noise);
-        
+        result.error.fun1.Dist.clean{i} = getErrorDistancesPosition(data.AnchorPositions,data.DistancesClean,result.fun1.locations.clean{i});
+        result.error.fun2.Dist.clean{i} = getErrorDistancesPosition(data.AnchorPositions,data.DistancesClean,result.fun2.locations.clean{i});
+        result.error.fun1.Dist.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.DistancesClean,result.fun1.locations.noise{i});
+        result.error.fun2.Dist.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.DistancesClean,result.fun2.locations.noise{i});
         % Difference between calculated distance and real distance (only
         % possible due to simulation OR real accurate measurements)
-        result.error.fun1.Dist.noise{i} = getErrorDistances(data.AnchorPositions,data.TagPositions,result.fun1.locations.noise{i});
-        result.error.fun2.Dist.noise{i} = getErrorDistances(data.AnchorPositions,data.TagPositions,result.fun2.locations.noise{i});
+        result.error.fun1.Dist2.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.Distances,result.fun1.locations.noise{i});
+        result.error.fun2.Dist2.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.Distances,result.fun2.locations.noise{i});
+        
+        result.error.fun1.Pos.clean{i} = getErrorLocations(data.TagPositions,result.fun1.locations.clean{i});
+        result.error.fun2.Pos.clean{i} = getErrorLocations(data.TagPositions,result.fun2.locations.clean{i});
+        result.error.fun1.Pos.noise{i} = getErrorLocations(data.TagPositions,result.fun1.locations.noise{i});
+        result.error.fun2.Pos.noise{i} = getErrorLocations(data.TagPositions,result.fun2.locations.noise{i});
+        
         
         %% Make plots
         if blPlot
