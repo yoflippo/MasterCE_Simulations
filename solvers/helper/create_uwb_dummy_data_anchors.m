@@ -59,14 +59,15 @@ for i = 0
     
     %% Draw anchors
     yline = 400;
-    AnchorLocations = [-600 -600;600 -600;-600 600;600 600;];
-    nameCurr = ['4anc_' num2str(i)];
+    AnchorLocations = [-600 -600; 600 -600;-800 600; 800 600; 0 800; 0 -1000];
+    nameCurr = ['6anc_' num2str(i)];
     data.nameCurr = nameCurr;
     
-    % % TRIANGLE
+%     % TRIANGLE
+%     posA = 600;
 %     [AnchorLocations(:,1), AnchorLocations(:,2)] = topTriangle(0,1000);
-%     % nameCurr = ['Triangle' num2str(posA/2)];
-%     % data.nameCurr = nameCurr;
+%     nameCurr = ['Triangle' num2str(posA/2)];
+%     data.nameCurr = nameCurr;
     
     nameOutput =[mfilename '_' data.DateTimeOfCreation '_' nameCurr];
     hp = plot(AnchorLocations(:,1), AnchorLocations(:,2), 'bv', 'MarkerSize', 8,'LineWidth',3,'DisplayName','Anchor');

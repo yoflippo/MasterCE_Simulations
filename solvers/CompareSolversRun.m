@@ -74,22 +74,22 @@ end
 
 concatmethods = lower([alg1 alg2]);
 switch concatmethods
-    case 'larssonvinay'
+    case {'larssonvinay', 'vinaylarsson'}
         results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeVinay1,...
             'Vinay',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
-    case 'larssonfaber2'
+    case {'larssonfaber2','faber2larsson'}
         results = CompareSolvers(@executeLarssonTrilateration, 'Larsson',@executeFabertMultiLateration2,...
             'Faber2',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
-    case 'larssonfaber2a'
+    case {'larssonfaber2a','faber2alarsson'}
         results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeFabertMultiLateration2a,....
             'Faber2a',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
-    case 'larssonfaber2b'
+    case {'larssonfaber2b','faber2blarsson'}
         results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeFabertMultiLateration2b,...
             'Faber2b',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
-    case  'larssonfaber9'
+    case  {'larssonfaber9','faber9larsson'}
         results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeFabertMultiLateration9,...
             'Faber9',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
-    case 'faber2avinay'
+    case {'vinayfaber2a','faber2avinay'}
         results = CompareSolvers(@executeFabertMultiLateration2a,'Faber2a',...
             @executeVinay1,'Vinay',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
     otherwise
@@ -107,8 +107,8 @@ if not(blDuration)
     createErrorPlots(results.error.fun1.Dist.clean,results.error.fun2.Dist.clean,'clean');
 else
     %% Duration
-    createDurationPlots(results.fun1.duration.noise{:},results.fun2.duration.noise{:},'noise');
-    createDurationPlots(results.fun1.duration.clean{:},results.fun2.duration.clean{:},'clean');
+    createDurationPlots(results.fun1.duration.noise,results.fun2.duration.noise,'noise');
+    createDurationPlots(results.fun1.duration.clean,results.fun2.duration.clean,'clean');
 end
 
     function createErrorPlots(pos1,pos2,extratxt)

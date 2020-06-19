@@ -1,0 +1,4 @@
+*.m~
+output/*
+dummy_data_sets/*
+
