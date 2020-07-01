@@ -59,8 +59,8 @@ for i = 0
     
     %% Draw anchors
     yline = 400;
-    AnchorLocations = [-600 -600; 600 -600;-800 600; 800 600; 0 800; 0 -1000];
-    nameCurr = ['6anc_' num2str(i)];
+    AnchorLocations = [-800 -600; 800 -600;-800 600; 800 600; 0 1000; -400 -1000; 400 -1000];
+    nameCurr = ['7anc_' num2str(i)];
     data.nameCurr = nameCurr;
     
 %     % TRIANGLE

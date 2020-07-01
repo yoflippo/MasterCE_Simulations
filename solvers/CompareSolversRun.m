@@ -1,4 +1,4 @@
-function CompareSolversRun(varargin)
+function [results] = CompareSolversRun(varargin)
 % alg1,alg2,numAnchors,blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration
 close all;
 clc;
@@ -21,6 +21,7 @@ if nargin > 1
     blUWBnoise = false;
     blPlotClean = false;
     blDuration = false;
+    blShowFinPlot = false;
     
     % fill some variables
     alg1 = varargin{1};
@@ -40,6 +41,8 @@ if nargin > 1
                     blUWBnoise = true;
                 case {'plotclean'}
                     blSavePlot = true;
+                case {'finplot'}
+                    blShowFinPlot = true;
                 case {'duration'}
                     blDuration = true;
                 otherwise
@@ -72,29 +75,12 @@ else
     stat.noisetype = 'Gaussian noise';
 end
 
-concatmethods = lower([alg1 alg2]);
-switch concatmethods
-    case {'larssonvinay', 'vinaylarsson'}
-        results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeVinay1,...
-            'Vinay',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
-    case {'larssonfaber2','faber2larsson'}
-        results = CompareSolvers(@executeLarssonTrilateration, 'Larsson',@executeFabertMultiLateration2,...
-            'Faber2',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
-    case {'larssonfaber2a','faber2alarsson'}
-        results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeFabertMultiLateration2a,....
-            'Faber2a',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
-    case {'larssonfaber2b','faber2blarsson'}
-        results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeFabertMultiLateration2b,...
-            'Faber2b',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
-    case  {'larssonfaber9','faber9larsson'}
-        results = CompareSolvers(@executeLarssonTrilateration,'Larsson',@executeFabertMultiLateration9,...
-            'Faber9',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
-    case {'vinayfaber2a','faber2avinay'}
-        results = CompareSolvers(@executeFabertMultiLateration2a,'Faber2a',...
-            @executeVinay1,'Vinay',blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
-    otherwise
-        disp([mfilename ': NOTHING TO DO, did not found combination ' concatmethods]);
-end
+% Ensure capital letter at beginning
+Alg1 = [upper(alg1(1)) lower(alg1(2:end))];
+Alg2 = [upper(alg2(1)) lower(alg2(2:end))];
+
+results = CompareSolvers(getHandleSolver(Alg1),Alg1,getHandleSolver(Alg2),Alg2,...
+    blPlot,blSavePlot,blUWBnoise,blPlotClean,blDuration);
 
 stat.infostr.plot = [results.name1 ' compared to ' results.name2 ', ' stat.strnumanchors ' Anchors, ' stat.noisetype ];
 stat.infostr.file = replace(stat.infostr.plot,' ','_');
@@ -158,7 +144,30 @@ end
     end
 
     function figureCompareSolvers()
-        figure('Position',[400 400 800 600]);
+        if blShowFinPlot
+            figure('Position',[400 400 800 600],'Visible','on');
+        else
+            figure('Position',[400 400 800 600],'Visible','off');
+        end
+    end
+
+    function handle = getHandleSolver(name)
+        switch lower(name)
+            case 'vinay'
+                handle = @executeVinay1;
+            case 'larsson'
+                handle = @executeLarssonTrilateration;
+            case 'faber2a'
+                handle = @executeFabertMultiLateration2a;
+            case 'faber2b'
+                handle = @executeFabertMultiLateration2b;
+            case  'faber9'
+                handle = @executeFabertMultiLateration9;
+            case 'murphy'
+                handle = @executeMurphy1;
+            otherwise
+                error([newline mfilename ': ' newline 'Can not happen!' newline]);
+        end
     end
 end
 

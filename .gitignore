@@ -1,4 +1,7 @@
 *.m~
 output/*
 dummy_data_sets/*
-
+solvers/helper/addGaussianNoise/*
+solvers/helper/createUWBNoise/*
+solvers/output/*
+solvers/dummy_data_sets/*

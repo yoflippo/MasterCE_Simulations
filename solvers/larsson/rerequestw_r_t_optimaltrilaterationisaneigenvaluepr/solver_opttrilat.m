@@ -43,6 +43,7 @@ else
     % eigenvector-less solution extraction
     r = zeros(n,2*n+1);
     for k = 1:2*n+1
+        
         z = [zeros(n,n);-eye(n)];
         T = AM - DD(k)*eye(2*n+1);
         r(:,k) = (T(:,1:end-1).' \ z).'*T(:,end);

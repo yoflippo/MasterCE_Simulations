@@ -1,5 +1,9 @@
-function create_uwb_dummy_data_combine_path()
+function create_uwb_dummy_data_combine_path(blVisible)
 close all; clearvars; clc;
+
+if ~exist('blVisible','var')
+    blVisible = false;
+end
 
 %% CHECKS
 if ~license('test', 'image_toolbox')
@@ -19,8 +23,9 @@ cd(fileparts(currPath));
 cd ..
 cd('dummy_data');
 files = dir('*.mat');
-rmdir(['..' filesep 'dummy_data_sets'],'s');
-mkdir(['..' filesep 'dummy_data_sets'])
+
+% rmdirIf(['..' filesep 'dummy_data_sets']);
+% mkdirIf(['..' filesep 'dummy_data_sets'])
 
 Files.Anchor = files(contains({files.name}','anchors'));
 Files.Path = files(contains({files.name}','path'));
@@ -34,6 +39,9 @@ for nP = 1:length(Files.Path)
         load(currPathFile);
         dataCurrPath = data;
         open(replace(currPathFile,'.mat','.fig'));
+        if not(blVisible)
+            set(gcf,'Visible','off');
+        end
         currAnchorFile = fullfile(Files.Anchor(nA).folder,Files.Anchor(nA).name);
         load(currAnchorFile);
         plot(data.AnchorPositions(:,1), data.AnchorPositions(:,2), 'bv', 'MarkerSize', 8,'LineWidth',3,'DisplayName','Anchor');

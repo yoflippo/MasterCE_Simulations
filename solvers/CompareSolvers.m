@@ -34,9 +34,7 @@ end
 for i = 1:numberOfPlotsToOpen
     result.name1 = name1;
     result.name2 = name2;
-    fn = matfiles(i).name;
-    load(fn);
-    [~,nameLoadedMat] = fileparts(fn);
+    load(fullfile(matfiles(i).folder,matfiles(i).name));
     
     %% Measure duration OR Trilaterate
     if blDuration
@@ -47,10 +45,10 @@ for i = 1:numberOfPlotsToOpen
         
         % With noise
         if blUWBnoise
-            data.Distances = createUWBNoise(data.Distances,20);
+            data.Distances = createUWBNoise(data.Distances,1);
             name.noise = 'UWB-noise';
         else
-            data.Distances = addGaussianNoise(data.Distances,1);
+            data.Distances = addGaussianNoise(data.Distances,10);
             name.noise = 'Gaussian-noise';
         end
         dur = @() funhandle1(data);
@@ -66,11 +64,11 @@ for i = 1:numberOfPlotsToOpen
         % With noise
         if blUWBnoise
             data.DistancesClean = data.Distances;
-            data.Distances = createUWBNoise(data.Distances,20);
+            data.Distances = createUWBNoise(data.Distances,1);
             name.noise = 'UWB-noise';
         else
             data.DistancesClean = data.Distances;
-            data.Distances = addGaussianNoise(data.Distances,1);
+            data.Distances = addGaussianNoise(data.Distances,10);
             name.noise = 'Gaussian-noise';
         end
         result.fun1.locations.noise{i} = funhandle1(data);
@@ -83,16 +81,16 @@ for i = 1:numberOfPlotsToOpen
         result.error.fun2.Dist.clean{i} = getErrorDistancesPosition(data.AnchorPositions,data.DistancesClean,result.fun2.locations.clean{i});
         result.error.fun1.Dist.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.DistancesClean,result.fun1.locations.noise{i});
         result.error.fun2.Dist.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.DistancesClean,result.fun2.locations.noise{i});
+        
         % Difference between calculated distance and real distance (only
         % possible due to simulation OR real accurate measurements)
-        result.error.fun1.Dist2.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.Distances,result.fun1.locations.noise{i});
-        result.error.fun2.Dist2.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.Distances,result.fun2.locations.noise{i});
+        result.error.fun1.DistWithNoise.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.Distances,result.fun1.locations.noise{i});
+        result.error.fun2.DistWithNoise.noise{i} = getErrorDistancesPosition(data.AnchorPositions,data.Distances,result.fun2.locations.noise{i});
         
         result.error.fun1.Pos.clean{i} = getErrorLocations(data.TagPositions,result.fun1.locations.clean{i});
         result.error.fun2.Pos.clean{i} = getErrorLocations(data.TagPositions,result.fun2.locations.clean{i});
         result.error.fun1.Pos.noise{i} = getErrorLocations(data.TagPositions,result.fun1.locations.noise{i});
         result.error.fun2.Pos.noise{i} = getErrorLocations(data.TagPositions,result.fun2.locations.noise{i});
-        
         
         %% Make plots
         if blPlot
@@ -152,4 +150,5 @@ if blPlot
     distFig()
 end
 warning on
+result.data = data;
 end
