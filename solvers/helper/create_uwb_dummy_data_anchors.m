@@ -53,31 +53,36 @@ repCounter = 1;
 data.DateTimeOfCreation = char(datetime('now','Format','yyMMddHHmmss'));
 
 %% Create figure
-for i = 0
-    hFig = figure('WindowState','maximized');
+AnchorLocations = [
+        -300 800;
+        -800 -500;
+    800 -800;
+    700 700;
+    -100 -900;
+    -700 400;
+    800 0;
+    ];
+
+for nA = 3:length(AnchorLocations)  
+    [nameOutput,pathAndNameOutput] = returnFullPathAndNameOfOutputfile(nA);
+    
     setFigure();
-    
-    %% Draw anchors
-    yline = 400;
-    AnchorLocations = [-800 -600; 800 -600;-800 600; 800 600; 0 1000; -400 -1000; 400 -1000];
-    nameCurr = ['7anc_' num2str(i)];
-    data.nameCurr = nameCurr;
-    
-%     % TRIANGLE
-%     posA = 600;
-%     [AnchorLocations(:,1), AnchorLocations(:,2)] = topTriangle(0,1000);
-%     nameCurr = ['Triangle' num2str(posA/2)];
-%     data.nameCurr = nameCurr;
-    
-    nameOutput =[mfilename '_' data.DateTimeOfCreation '_' nameCurr];
-    hp = plot(AnchorLocations(:,1), AnchorLocations(:,2), 'bv', 'MarkerSize', 8,'LineWidth',3,'DisplayName','Anchor');
+    hp = plot(AnchorLocations(1:nA,1), AnchorLocations(1:nA,2), 'bv', 'MarkerSize', 8,'LineWidth',3,'DisplayName','Anchor');
     pause(0.1);
-    saveData(nameOutput)
+    saveData(pathAndNameOutput,AnchorLocations(1:nA,:));
     close all;
 end
 
 
 %% Callback functions
+
+    function [nameOutputFile,pathAndNameOutput] = returnFullPathAndNameOfOutputfile(nA)
+        strLengthAnchorLocations = num2str(nA);
+        nameOutputFile = [strLengthAnchorLocations '_anchors'];
+        data.nameCurr = nameOutputFile;
+        pathAnchorConfigs = findSubFolderPath(fileparts(pwd),'solvers','AnchorConfigs');
+        pathAndNameOutput = fullfile(pathAnchorConfigs,nameOutputFile);
+    end
 
     function KeyPressFcn(~,evnt)
         [r, c] = size(AnchorLocations);
@@ -89,7 +94,7 @@ end
             nameOutput =['.' filesep mfilename '_' nameCurr];
             %             nameOutput =['.' filesep 'dummy_data' filesep mfilename '_' data.DateTimeOfCreation nameCurr];
             saveas(gcf,nameOutput);
-            saveData(nameOutput)
+            saveData(nameOutput,AnchorLocations)
             close all;
             return
             
@@ -99,7 +104,7 @@ end
         end
     end
 
-    function saveData(nameOut)
+    function saveData(nameOut,AnchorLocations)
         if ~exist('nameOut','var')
             nameOut = '';
         end
@@ -111,6 +116,7 @@ end
     end
 
     function setFigure()
+        hFig = figure('WindowState','maximized');
         clf;
         set(hFig,'WindowKeyPressFcn',@KeyPressFcn);
         axis([-1500 1500 -1500 1500]);
@@ -133,4 +139,23 @@ end
         xc = xc - mean(xc);
         yc = yc - mean(yc);
     end
+
+
+    function [output] = findSubFolderPath(absolutePath,rootFolder,nameFolder)
+        
+        if ~contains(absolutePath,rootFolder)
+            error([newline mfilename ': ' newline 'Rootfolder not within absolutePath' newline]);
+        end
+        startDir = fullfile(extractBefore(absolutePath,rootFolder),rootFolder);
+        dirs = dir([startDir filesep '**' filesep '*']);
+        dirs(~[dirs.isdir])=[];
+        dirs(contains({dirs.name},'.'))=[];
+        dirs(~contains({dirs.name},nameFolder))=[];
+        if length(dirs)>1
+            warning([newline mfilename ': ' newline 'Multiple possible folders found' newline]);
+            output = dirs;
+        end
+        output = fullfile(dirs(1).folder,dirs(1).name);
+    end
+
 end %function
