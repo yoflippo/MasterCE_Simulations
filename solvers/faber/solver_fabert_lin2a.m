@@ -1,4 +1,4 @@
-function locations = solver_fabert_lin2(distances,anchorloc)
+function locations = solver_fabert_lin2a(distances,anchorloc)
 
 %% Create some help variables
 [N,~] = size(anchorloc);
