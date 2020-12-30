@@ -1,9 +1,10 @@
-function [] = kalman_multiple_similar_sensors_1d()
+function [] = kalman_multiple_similar_sensors_1d_withvel()
 close all;
 dt = 0.1;% time step
 t=(0:dt:20)';
 n = numel(t);
 position = 1*sin(t*5)+t;%ground truth
+velocity = gradient(position,dt);
 X = zeros(2,1);% state matrix
 P = zeros(2,2);% covariance matrix
 X_arr = zeros(n, 2);% kalman filter output through the whole time
@@ -15,12 +16,13 @@ H = [1 0];% observation matrix
 
 s1_var = 0.1*ones(size(t));
 s1 = generate_signal(position, s1_var);
-s2_var = 0.1*(cos(8*t)+10*t);
-s2 = generate_signal(position, s2_var);
-s3_var = 0.1*(sin(2*t)+10);
-s3 = generate_signal(position, s3_var);
-s4_var = 0.1*ones(size(t));
-s4 = generate_signal(position, s4_var);
+v1 = generate_signal(velocity, 0.2);
+% s2_var = 0.1*(cos(8*t)+10*t);
+% s2 = generate_signal(position, s2_var);
+% s3_var = 0.1*(sin(2*t)+10);
+% s3 = generate_signal(position, s3_var);
+% s4_var = 0.1*ones(size(t));
+% s4 = generate_signal(position, s4_var);
 
 % fusion
 for i = 1:n
