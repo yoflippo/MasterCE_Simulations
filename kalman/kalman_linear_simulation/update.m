@@ -5,5 +5,7 @@ K = P*H'*inv(S);
 
 X = X + K*Inn;
 % P = P - K*H*P;
-P = (eye(size(P))-K*H)*P*(eye(size(P))-K*H)' + K*R*K'; %joseph equation
+%% joseph equation: for non-optimal Kalman Gain
+A = eye(size(P))-K*H;
+P = A*P*A' + K*R*K'; 
 end
