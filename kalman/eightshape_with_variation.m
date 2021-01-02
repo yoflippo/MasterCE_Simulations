@@ -8,7 +8,7 @@ end
 [y,x] = eightshape(t);
 x = x.*(cos(t/200)+1);
 y = y+linspace(-0.1,0.1,length(t));
-x = maxX*(x./max(x));
-y = maxY*(y./max(y));
+x = (maxX/2)*(x./max(x)); % /2 to prevent double maxX
+y = (maxY/2)*(y./max(y));
 end
 

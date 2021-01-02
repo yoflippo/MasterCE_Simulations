@@ -8,7 +8,7 @@ maxY = 10000;
 [x,y] = eightshape_with_variation(t,maxX,maxY);
 
 subplot(3,1,1);
-plot(x,y); grid on; grid minor; axis equal;
+plot(x,y); grid on; grid minor; %axis equal;
 subplot(3,1,2);
 plot(t,x); grid on; grid minor;
 subplot(3,1,3);
