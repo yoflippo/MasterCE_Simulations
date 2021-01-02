@@ -13,7 +13,8 @@ maxY = 10000;
 XYclean = [x; y];
 XYrotated = R*XYclean;
 XYrotated = addGradualRotation(XYrotated);
-XYrotated = [XYrotated(1,:)+5000; XYrotated(2,:)+200;];
+XYrotated = addOffset(XYrotated);
+XYrotated = addSomeVariation(XYrotated);
 
 if isequal(nargout,0)
     close all;
@@ -29,4 +30,17 @@ end
             xy(:,nS:end) = Rot*xy(:,nS:end);
         end
     end
+
+    function xy = addOffset(xy)
+        xy = [xy(1,:)+5000; xy(2,:)+200;];
+    end
+
+    function xy = addSomeVariation(xy)
+        x1 = xy(1,:); y1 = xy(2,:);
+        factor = 10;
+        xuwb = x1 + factor*randn(size(x1));
+        yuwb = y1 + factor*randn(size(y1));
+        xy = [xuwb; yuwb];
+    end
+
 end
