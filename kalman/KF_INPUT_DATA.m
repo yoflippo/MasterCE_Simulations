@@ -18,7 +18,7 @@ if not(exist(matfilename,'file'))
     
     % velocity(1).var = zeros(n,1);
     % velocity(1).sig = zeros(n,1);
-    velocity(1).var = sin(t*10)+10;
+    velocity(1).var = sin(t*10)+100;
     velocity(1).sig = generate_signal(clean.velocity, velocity(1).var);
     save(matfilename);
 else
