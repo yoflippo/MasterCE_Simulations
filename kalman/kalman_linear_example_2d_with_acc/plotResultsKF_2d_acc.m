@@ -1,5 +1,5 @@
 function plotResultsKF_2d_acc(t,clean,signals,X_arr,add2title)
-close all;
+
 subplot(3,1,1);
 plot(clean.position.x, clean.position.y,'g', 'LineWidth', 2,...
     'DisplayName','clean signal');
@@ -38,8 +38,5 @@ if not(exist('add2title','var'))
 else
     add2title = [add2title ': '];
 end
-
-% title([add2title num2str(round(rmse(X_arr(:,1)-clean.position),3))])
-grid on; grid minor;
 end
 

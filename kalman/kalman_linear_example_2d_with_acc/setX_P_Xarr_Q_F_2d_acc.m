@@ -6,10 +6,10 @@ X_arr = zeros(n, dim);% kalman filter output through the whole time
 
 Q = [0.1 0 0 0   0   0;% system noise
      0 0.1 0 0   0   0;
-     0 0   10 0   0   0;
+     0 0   50 0   0   0;
      0 0   0 0.1 0   0;
      0 0   0 0   0.1 0;
-     0 0   0 0   0   10];
+     0 0   0 0   0   0.5];
 F = [1 dt 0.5*dt*dt 0 0 0;% transition matrix
      0 1  dt        0 0 0;
      0 0  1         0 0 0;
