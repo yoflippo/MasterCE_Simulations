@@ -37,7 +37,7 @@ end
 
     function xy = addSomeVariation(xy)
         x1 = xy(1,:); y1 = xy(2,:);
-        factor = 10;
+        factor = 5;
         xuwb = x1 + factor*randn(size(x1));
         yuwb = y1 + factor*randn(size(y1));
         xy = [xuwb; yuwb];

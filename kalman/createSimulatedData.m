@@ -1,7 +1,7 @@
 function [XYclean,XYwmpm,XYuwb,tempspecs] = createSimulatedData()
 fs = 100; dt = 1/fs; n = 20; t = 0:dt:n;
 [XYclean,XYwmpm] = createWMPMdata(t);
-XYuwb = createUWBdata(XYclean,t,fs);
+XYuwb = createUWBdata(XYclean,t);
 tempspecs.t = t;
 tempspecs.fs = fs;
 tempspecs.n = n;

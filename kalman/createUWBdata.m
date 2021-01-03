@@ -1,4 +1,4 @@
-function XYuwb = createUWBdata(XYclean,t,fs)
+function XYuwb = createUWBdata(XYclean,t)
 fsuwb = 8;
 tuwb = 0:1/fsuwb:t(end);
 x = interp1(t,XYclean(1,:),tuwb);

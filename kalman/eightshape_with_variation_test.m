@@ -1,4 +1,4 @@
-function [x,y] = eightshape_test()
+function [x,y] = eightshape_with_variation_test()
 close all;
 dt = 0.01;
 t = 0:dt:20;
