@@ -1,5 +1,6 @@
 function [dt,t,n,Signals,velocity,clean] = KF_INPUT_DATA_2d()
 matfilename = [mfilename '.mat'];
+cd(fileparts(mfilename('fullpath')));
 if not(exist(matfilename,'file'))
     [dt,t,n,Signals,velocity,clean] = generateAll();
     save(matfilename);
