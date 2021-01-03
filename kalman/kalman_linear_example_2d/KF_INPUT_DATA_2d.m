@@ -5,15 +5,16 @@ if not(exist(matfilename,'file'))
     save(matfilename);
 else
     load(matfilename);
-    [~,t2,n2,Signals2,~,clean2] = generateAll();
+    [~,t2,n2,Signals2,velocity2,clean2] = generateAll();
     if (not(isequal(t2,t)) || ...
             not(isequal(n2,n)) || ...
             not(isequal(Signals(1).var,Signals2(1).var)) || ...
             not(isequal(Signals(2).var,Signals2(2).var)) || ...
-            not(isequal(Signals(3).var,Signals2(3).var)) || ...
+            not(isequal(Signals(3).var,Signals2(3).var)) || ...  
+            not(isequal(velocity(1).var,velocity2(1).var)) || ...
             not(isequal(Signals(4).var,Signals2(4).var)))
         [dt,t,n,Signals,velocity,clean] = generateAll();
-        clear t2 n2 Signals2 clean2 
+        clear t2 n2 Signals2 clean2 velocity2
         save(matfilename);
     end
 end
@@ -44,7 +45,7 @@ Signals(4).var = 0.1*ones(size(t));
 Signals(4).sig.x = generate_signal(clean.position.x, Signals(4).var);
 Signals(4).sig.y = generate_signal(clean.position.y, Signals(4).var);
 
-velocity(1).var = ones(length(t),1)*0.1;
+velocity(1).var = ones(length(t),1)*0.05;
 velocity(1).sig.x = generate_signal(clean.velocity.x, velocity(1).var);
 velocity(1).sig.y = generate_signal(clean.velocity.y, velocity(1).var);
 end

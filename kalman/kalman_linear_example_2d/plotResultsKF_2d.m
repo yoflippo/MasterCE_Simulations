@@ -13,7 +13,7 @@ plot(X_arr(:, 1), X_arr(:, 3),'Color',[0 0 1], ...
 grid on; grid minor; legend
 percentageImprovement = (rmse(signals(1).sig.x-clean.position.x)+rmse(signals(1).sig.y-clean.position.y))/ ...
     (rmse(X_arr(:,1)-clean.position.x)+rmse(X_arr(:,3)-clean.position.y));
-title([add2title  ': xy '  num2str(round(percentageImprovement,3))])
+title([add2title  ': xy, RMSE improvement '  num2str(round(percentageImprovement,3))])
 axis equal;
 
 subplot(3,1,2);
@@ -22,7 +22,7 @@ plot(t, signals(1).sig.x,'r','LineWidth', 2,'DisplayName','disturbed x','LineSty
 plot(t,  X_arr(:, 1),'Color',[0.7 0.7 0.1], 'LineWidth', 2,'DisplayName','KF result x');
 grid on; grid minor; legend
 percentageImprovement = (rmse(signals(1).sig.x-clean.position.x)/rmse(X_arr(:,1)-clean.position.x));
-title([add2title ': x ' num2str(round(percentageImprovement,3))])
+title([add2title ': x, RMSE improvement ' num2str(round(percentageImprovement,3))])
 
 
 subplot(3,1,3);
@@ -33,7 +33,7 @@ plot(t, signals(1).sig.y,'r','LineWidth', 2,...
 plot(t, X_arr(:, 3),'Color',[0.7 0.7 0.1], 'LineWidth', 2,'DisplayName','KF result y');
 grid on; grid minor; legend
 percentageImprovement = (rmse(signals(1).sig.y-clean.position.y)/rmse(X_arr(:,3)-clean.position.y));
-title([add2title ': y ' num2str(round(percentageImprovement,3))])
+title([add2title ': y, RMSE improvement ' num2str(round(percentageImprovement,3))])
 
 if not(exist('add2title','var'))
     add2title = '';

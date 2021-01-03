@@ -13,7 +13,7 @@ else
 end
 
 percentageImprovement = (rmse(signals(1).sig-clean.position)/rmse(X_arr(:,1)-clean.position));
-title([add2title ': x ' num2str(round(percentageImprovement,3))])
+title([add2title ': x, RMSE improvement ' num2str(round(percentageImprovement,3))])
 grid on;
 end
 

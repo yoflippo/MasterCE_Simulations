@@ -5,7 +5,7 @@ function [] = kalman_multiple_similar_sensors_2d()
 H = [1 0 0 0;
     0 1 0 0;
     0 0 1 0;
-    0 0 0 1;]% observation matrix
+    0 0 0 1;];% observation matrix
 
 
 % fusion
