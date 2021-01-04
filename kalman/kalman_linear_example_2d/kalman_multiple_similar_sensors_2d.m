@@ -9,25 +9,24 @@ H = [1 0 0 0;
     0 0 1 0;
     0 0 0 1;];% observation matrix
 
-
 % fusion
 for i = 1:n
     if (i == 1)
         y = getMeasurementData(signals,velocity,1,i);
-        [X, P] = init_kalman_2d(y); % initialize the state using the 1st sensor
+        [X, P] = init_kalman_2d(y);
     else
         [X, P] = prediction_2d(X, P, Q, F);
-        [y,R] = getMeasurementData(signals,velocity,1,i);
+        [y, R] = getMeasurementData(signals,velocity,1,i);
         [X, P] = update_2d(X, P, y, R, H);
     end
     X_arr(i, :) = X;
     P_arr(i).M = P;
 end
 
-plotResultsKF_2d(t,clean,signals,X_arr,'2d');
+plotResultsKF_2d(t,clean,signals,X_arr,velocity,'2d');
 figure;
 [X_arr, P, K, Pp] = rts_smooth(X_arr, P_arr, F, Q);
-plotResultsKF_2d_acc(t,clean,signals,X_arr,'2d smoothed');
+plotResultsKF_2d(t,clean,signals,X_arr,velocity,'2d smoothed');
 end
 
 function [y,R] = getMeasurementData(signals,velocity,n,i)

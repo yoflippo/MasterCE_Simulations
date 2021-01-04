@@ -9,6 +9,7 @@ else
     [~,t2,n2,Signals2,velocity2,clean2,acceleration2] = generateAll();
     if (not(isequal(t2,t)) || ...
             not(isequal(n2,n)) || ...
+            not(isequal(clean.position.x,clean2.position.x)) || ...
             not(isequal(Signals(1).var,Signals2(1).var)) || ...
             not(isequal(Signals(2).var,Signals2(2).var)) || ...
             not(isequal(Signals(3).var,Signals2(3).var)) || ...
@@ -40,10 +41,10 @@ end
 end
 
 function [dt,t,n,Signals,velocity,clean,acceleration] = generateAll()
-dt = 1/20;% time step
-t=(0:dt:20)';
+dt = 1/100;% time step
+t=(0:dt:15)';
 n = numel(t);
-[x,y] = eightshape_with_variation(t,5,10);%ground truth
+[x,y] = eightshape_with_variation(t,10,10);%ground truth
 clean.position.x = x;
 clean.position.y = y;
 clean.velocity.x = gradient(clean.position.x,dt);
