@@ -41,7 +41,7 @@ end
 end
 
 function [dt,t,n,Signals,velocity,clean,acceleration] = generateAll()
-dt = 1/100;% time step
+dt = 1/500;% time step
 t=(0:dt:15)';
 n = numel(t);
 [x,y] = eightshape_with_variation(t,10,10);%ground truth
