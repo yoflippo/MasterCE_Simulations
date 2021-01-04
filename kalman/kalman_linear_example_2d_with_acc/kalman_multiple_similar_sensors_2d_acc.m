@@ -20,9 +20,12 @@ for i = 1:n
         [X, P] = update_2d_acc(X, P, y, R, H);
     end
     X_arr(i, :) = X;
+    P_arr(i).M = P;
 end
-
 plotResultsKF_2d_acc(t,clean,signals,X_arr,'2d acc');
+[X_arr, P, K, Pp] = rts_smooth(X_arr, P_arr, F, Q);
+figure;
+plotResultsKF_2d_acc(t,clean,signals,X_arr,'2d acc smoothed');
 end
 
 function [y,R] = getMeasurementData(signals,velocity,n,i)
