@@ -1,25 +1,22 @@
-function [dt,t,n,Signals,velocity,clean,acceleration] = KF_INPUT_DATA_2d()
+function [dt,t,n,Signals,velocity,clean,acceleration,dt2,t2,n2] = KF_INPUT_DATA_2d_varrates()
 matfilename = [mfilename '.mat'];
 cd(fileparts(mfilename('fullpath')));
 if not(exist(matfilename,'file'))
-    [dt,t,n,Signals,velocity,clean,acceleration] = generateAll();
+    [dt,t,n,Signals,velocity,clean,acceleration,dt2,t2,n2] = generateAll();
     save(matfilename);
 else
     load(matfilename);
-    [~,t2,n2,Signals2,velocity2,clean2,acceleration2] = generateAll();
+    [~,t2,n2,Signals2,velocity2,clean2,acceleration2,dt2a,t2a,n2a] = generateAll();
     if (not(isequal(t2,t)) || ...
             not(isequal(n2,n)) || ...
             not(isequal(clean.position.x,clean2.position.x)) || ...
             not(isequal(Signals(1).var,Signals2(1).var)) || ...
-            not(isequal(Signals(2).var,Signals2(2).var)) || ...
-            not(isequal(Signals(3).var,Signals2(3).var)) || ...
-            not(isequal(velocity(1).var,velocity2(1).var)) || ...
-            not(isequal(Signals(4).var,Signals2(4).var)))
-        [dt,t,n,Signals,velocity,clean,acceleration] = generateAll();
-        clear t2 n2 Signals2 clean2 velocity2 acceleration2
+            not(isequal(velocity(1).var,velocity2(1).var)))
+        [dt,t,n,Signals,velocity,clean,acceleration,dt2,t2,n2] = generateAll();
+        clear t2 n2 Signals2 clean2 velocity2 acceleration2 dt2a t2a n2a
         save(matfilename);
     end
-    clear t2 n2 Signals2 clean2 velocity2 acceleration2
+    clear t2 n2 Signals2 clean2 velocity2 acceleration2 dt2a t2a n2a
 end
 
 if isequal(nargout,0)
@@ -40,28 +37,26 @@ end
 
 end
 
-function [dt,t,n,Signals,velocity,clean,acceleration] = generateAll()
+function [dt,t,n,Signals,velocity,clean,acceleration,dt2,t2,n2] = generateAll()
+te = 15; %sec
 dt = 1/100;% time step
-t=(0:dt:15)';
+t=(0:dt:te)';
 n = numel(t);
-[x,y] = eightshape_with_variation(t,10,10);%ground truth
+dt2 = 1/10;
+t2=(0:dt2:te)';
+n2 = numel(t);
+courtwidth = 10;
+courtheigth = 10;
+[x,y] = eightshape_with_variation(t,courtwidth,courtheigth);%ground truth
+[x2,y2] = eightshape_with_variation(t2,courtwidth,courtheigth);
 clean.position.x = x;
 clean.position.y = y;
 clean.velocity.x = gradient(clean.position.x,dt);
 clean.velocity.y = gradient(clean.position.y,dt);
 
-Signals(1).var = 1*ones(size(t));
-Signals(1).sig.x = generate_signal(clean.position.x, Signals(1).var);
-Signals(1).sig.y = generate_signal(clean.position.y, Signals(1).var);
-Signals(2).var = 0.1*(cos(8*t)+10*t);
-Signals(2).sig.x = generate_signal(clean.position.x, Signals(2).var);
-Signals(2).sig.y = generate_signal(clean.position.y, Signals(2).var);
-Signals(3).var = 0.1*(sin(2*t)+10);
-Signals(3).sig.x = generate_signal(clean.position.x, Signals(3).var);
-Signals(3).sig.y = generate_signal(clean.position.y, Signals(3).var);
-Signals(4).var = 0.1*ones(size(t));
-Signals(4).sig.x = generate_signal(clean.position.x, Signals(4).var);
-Signals(4).sig.y = generate_signal(clean.position.y, Signals(4).var);
+Signals(1).var = 1*ones(size(t2));
+Signals(1).sig.x = generate_signal(x2, Signals(1).var);
+Signals(1).sig.y = generate_signal(y2, Signals(1).var);
 
 velocity(1).var = ones(length(t),1)*0.05;
 velocity(1).sig.x = generate_signal(clean.velocity.x, velocity(1).var);
