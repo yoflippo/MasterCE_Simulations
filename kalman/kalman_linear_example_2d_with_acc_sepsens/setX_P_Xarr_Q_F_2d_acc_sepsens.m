@@ -1,4 +1,4 @@
-function [X,P,X_arr,Q,F,H] = setX_P_Xarr_Q_F_2d_acc(n,dt)
+function [X,P,X_arr,Q,F,Hp,Hv] = setX_P_Xarr_Q_F_2d_acc_sepsens(n,dt)
 dim = 6;
 X = zeros(dim,1);           % state matrix
 P = eye(dim)*2;             % covariance matrix
@@ -22,9 +22,12 @@ F = [1 dt 0.5*dt*dt 0 0 0;% transition matrix
     0 0  0         0 1  dt;
     0 0  0         0 0  1];
 
- H = [  1 0 0 0 0 0;
-        0 1 0 0 0 0;
-        0 0 0 1 0 0;
-        0 0 0 0 1 0;];% observation matrix
+
+Hp = [  1 0 0 0 0 0;
+0 0 0 1 0 0;];% observation matrix
+
+Hv = [
+    0 1 0 0 0 0;
+    0 0 0 0 1 0;];% observation matrix
 end
 
