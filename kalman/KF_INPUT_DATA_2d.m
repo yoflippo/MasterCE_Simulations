@@ -69,7 +69,7 @@ velocity(1).sig.y = generate_signal(clean.velocity.y, velocity(1).var);
 
 acceleration.sig.x = gradient(velocity.sig.x,dt);
 acceleration.sig.y = gradient(velocity.sig.y,dt);
-acceleration.var = var([acceleration.sig.x; acceleration.sig.y]);
+acceleration.var = ones(length(t),1)*2;
 end
 
 function [outsignal, outvar] = generate_signal(signal, var)

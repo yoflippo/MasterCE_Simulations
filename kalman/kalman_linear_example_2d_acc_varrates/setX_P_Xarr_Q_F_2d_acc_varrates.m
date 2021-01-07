@@ -17,7 +17,7 @@ X_arr = zeros(n, dim);      % kalman filter output through the whole time
 %     0      0   0       0   0.05 0;
 %     0      0   0       0   0   0.5];
 
-Q1 = createQ(dt, 0.1);  %POSITION
+Q1 = createQ(dt, 0.02);  %POSITION
 Q2 = createQ(dt2,0.02); %VELOCITY
 
 
@@ -50,4 +50,11 @@ Q = [.25*dt^4, .5*dt^3, .5*dt^2 0 0 0;
     0          0       0       .25*dt^4, .5*dt^3, .5*dt^2;
     0          0       0       .5*dt^3,    dt^2,       dt ;
     0          0       0       .5*dt^2,       dt,        1]*var;
+
+Q = [0.02      0   0       0   0   0;% system noise
+     0      0.05 0       0   0   0;
+     0      0   0.5    0   0   0;
+     0      0   0       0.02   0   0;
+     0      0   0       0   0.05 0;
+     0      0   0       0   0   0.5];
 end

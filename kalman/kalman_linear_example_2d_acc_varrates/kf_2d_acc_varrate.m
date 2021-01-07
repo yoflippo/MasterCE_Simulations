@@ -12,17 +12,17 @@ for i = 1:ts.n2
         y = getMeasurementData_varrates(signals,velocity,1,i);
         [X, P] = init_kalman_2d_acc_varrates(y);
     else
-        if isequal(cnt,ts.fs)
-            cnt = 0;
-            [X, P] = prediction_2d_acc_varrates(X, P, Q1, F1);
-            [y, R] = getMeasurementData_varrates(signals,velocity,1,floor(i/ts.fs),true);
-            [X, P] = update_2d_acc_varrates(X, P, y, R, H1);
-        end
         [X, P] = prediction_2d_acc_varrates(X, P, Q2, F2);
         [y, R] = getMeasurementData_varrates(signals,velocity,1,i);
         [X, P] = update_2d_acc_varrates(X, P, y, R, H2);
         
-        cnt = cnt + 1;
+        if ts.t(cnt)<=ts.t2(i)
+%             [X, P] = prediction_2d_acc_varrates(X, P, Q1, F1);
+            [y, R] = getMeasurementData_varrates(signals,velocity,1,cnt,true);
+            [X, P] = update_2d_acc_varrates(X, P, y, R, H1);
+            cnt = cnt + 1;
+        end
+        
     end
     X_arr(i, :) = X;
     P_arr(i).M = P;

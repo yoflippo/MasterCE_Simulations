@@ -39,7 +39,7 @@ end
 function [Signals,velocity,clean,acceleration,temporalspecs] = generateAll()
 te = 15; %sec
 
-fs = 10;
+fs = 9;
 dt = 1/fs;
 t=(0:dt:te)';
 n = numel(t);
@@ -56,8 +56,8 @@ courtheigth = 10;
 [x2,y2] = eightshape_with_variation(t2,courtwidth,courtheigth);
 clean.position.x = x;
 clean.position.y = y;
-clean.velocity.x = gradient(x2,dt);
-clean.velocity.y = gradient(y2,dt);
+clean.velocity.x = gradient(x2,dt2);
+clean.velocity.y = gradient(y2,dt2);
 
 Signals(1).var = 1*ones(size(t));
 Signals(1).sig.x = generate_signal(x, Signals(1).var);
@@ -69,7 +69,7 @@ velocity(1).sig.y = generate_signal(clean.velocity.y, velocity(1).var);
 
 acceleration.sig.x = gradient(velocity.sig.x,dt2);
 acceleration.sig.y = gradient(velocity.sig.y,dt2);
-acceleration.var = var([acceleration.sig.x; acceleration.sig.y]);
+acceleration.var = ones(length(t),1)*2;
 
 temporalspecs.fs = fs;
 temporalspecs.fs2 = fs2;

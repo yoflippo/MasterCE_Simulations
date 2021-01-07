@@ -14,9 +14,9 @@ F = [1 dt 0 0;% transition matrix
      0 0  1 dt;
      0 0  0 1];
  
- H = [1 0 0 0;
-    0 1 0 0;
-    0 0 1 0;
-    0 0 0 1;];% observation matrix
+ H = [0 0 0 0;
+      0 1 0 0;
+      0 0 0 0;
+      0 0 0 1;];% observation matrix
 end
 
