@@ -1,9 +1,9 @@
 function run_kf2d_comparison()
 clc;
 close all;
-kalman_multiple_similar_sensors_2d_acc();
+KF_lin_2d_acc();
 figure;
-kalman_multiple_similar_sensors_2d();
+KF_lin_2d();
 distFig
 end
 
