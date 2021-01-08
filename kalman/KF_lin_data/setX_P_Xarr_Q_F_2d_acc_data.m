@@ -16,8 +16,8 @@ P = eye(dim)*2;             % covariance matrix
 %     0      0   0       0   0.05 0;
 %     0      0   0       0   0   0.5];
 
-Q1 = createQ(dt, 10000); %POSITION
-Q2 = createQ(dt2,100); %VELOCITY
+Q1 = createQ(dt, 100); %POSITION
+Q2 = createQ(dt2,10); %VELOCITY
 
 
 F1 = [1 dt 0.5*dt^2 0 0 0;% transition matrix
@@ -43,17 +43,17 @@ H2 =[
 end
 
 function Q = createQ(dt,var)
-Q = [.25*dt^4, .5*dt^3, .5*dt^2 0 0 0;
-    .5*dt^3,    dt^2,       dt 0 0 0;
-    .5*dt^2,       dt,        1 0 0 0;
-    0          0       0       .25*dt^4, .5*dt^3, .5*dt^2;
-    0          0       0       .5*dt^3,    dt^2,       dt ;
-    0          0       0       .5*dt^2,       dt,        1]*var;
+% Q = [.25*dt^4, .5*dt^3, .5*dt^2 0 0 0;
+%     .5*dt^3,    dt^2,       dt 0 0 0;
+%     .5*dt^2,       dt,        1 0 0 0;
+%     0          0       0       .25*dt^4, .5*dt^3, .5*dt^2;
+%     0          0       0       .5*dt^3,    dt^2,       dt ;
+%     0          0       0       .5*dt^2,       dt,        1]*var;
 
-% Q = [0.02      0   0       0   0   0;% system noise
-%      0      0.05 0       0   0   0;
-%      0      0   0.5    0   0   0;
-%      0      0   0       0.02   0   0;
-%      0      0   0       0   0.05 0;
-%      0      0   0       0   0   0.5];
+Q = [0.1      0   0       0   0   0;% system noise
+     0      0.1 0       0   0   0;
+     0      0   5    0   0   0;
+     0      0   0       0.1   0   0;
+     0      0   0       0   0.1 0;
+     0      0   0       0   0   5];
 end

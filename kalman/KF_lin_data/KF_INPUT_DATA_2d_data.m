@@ -3,26 +3,35 @@ function [positionuwb,velocity,clean,temporalspecs] = KF_INPUT_DATA_2d_data()
 cd(fileparts(mfilename('fullpath')));
 cd('synced_measurement_data');
 
-load('W_RANG_(~)_RS_00.mat');
+load('W_RANG_(~)_RS_01.mat');
 
 t_v = wmpm.time;
 dt_v = mean(diff(t_v));
 n_v = numel(t_v);
 fs_v = 1/dt_v;
 
-x_p = uwb.coord.x;
-y_p = uwb.coord.y;
+[uwbsl, optisl] = makeSameLength(uwb,opti);
+% uwbsl = improveUWB(uwbsl,100);
+ 
+x_p = uwbsl.x;
+y_p = uwbsl.y;
 
-t_p = uwb.time;
+t_p = uwbsl.time;
 dt_p = mean(diff(t_p));
 n_p = numel(t_p);
 fs_p = 1/dt_p;
 
+
 positionuwb.x = x_p;
 positionuwb.y = y_p;
 
-velocity.sig.x = gradient(wmpm.coord.x,dt_v);
-velocity.sig.y = gradient(wmpm.coord.y,dt_v);
+R = getRotationMatrixZ(0); 
+R = R(2:end,2:end);
+CDR = [wmpm.coord.x wmpm.coord.y]*R;
+velocity.sig.x = gradient(CDR(:,1),dt_v);
+velocity.sig.y = gradient(CDR(:,2),dt_v);
+% velocity.sig.x = gradient(wmpm.coord.x,dt_v);
+% velocity.sig.y = gradient(wmpm.coord.y,dt_v);
 
 clean.position.x = opti.coord.x;
 clean.position.y = opti.coord.y;
@@ -45,10 +54,10 @@ if isequal(nargout,0)
     close all; clc;
     subplot(2,2,1);
     plot(opti.time,opti.coord.x,'DisplayName','x opti');  grid on; grid minor; hold on;
-    plot(uwb.time,uwb.coord.x,'DisplayName','x uwb'); legend(); title('Coordinates X')
+    plot(uwbsl.time,positionuwb.x,'DisplayName','x uwb'); legend(); title('Coordinates X')
     subplot(2,2,2);
     plot(opti.time,opti.coord.y,'DisplayName','y opti');grid on; grid minor; hold on;
-    plot(uwb.time,uwb.coord.y,'DisplayName','y uwb'); legend(); title('Coordinates Y')
+    plot(uwbsl.time,positionuwb.y,'DisplayName','y uwb'); legend(); title('Coordinates Y')
     
     subplot(2,2,3);
     plot(t_v,velocity.sig.x,'DisplayName','vel x');  grid on; grid minor; hold on;
@@ -64,6 +73,40 @@ if isequal(nargout,0)
 end
 
 end
+
+
+function [uwbsl, optisl] = makeSameLength(uwb,opti)
+maxTimeUwb = uwb.time(end);
+maxTimeOpti = opti.time(end);
+maxTimeRound = round(min(maxTimeUwb,maxTimeOpti));
+vecTime = 0:1/10:max(maxTimeRound);
+
+uwbsl.x = interp1(uwb.time,uwb.coord.x,vecTime)';
+uwbsl.y = interp1(uwb.time,uwb.coord.y,vecTime)';
+uwbsl.z = interp1(uwb.time,uwb.coord.z,vecTime)';
+uwbsl.time = vecTime;
+uwbsl = makeNaNZeroStruct(uwbsl);
+optisl.x = interp1(opti.time,opti.coord.x,vecTime)';
+optisl.y = interp1(opti.time,opti.coord.y,vecTime)';
+optisl.z = interp1(opti.time,opti.coord.z,vecTime)';
+optisl.time = vecTime;
+optisl = makeNaNZeroStruct(optisl);
+end
+
+
+function uwb = improveUWB(uwb,varuwb)
+uwb.x = filteruwb(uwb.x)+randn(size(uwb.x))*varuwb;
+uwb.y = filteruwb(uwb.y)+randn(size(uwb.x))*varuwb;
+% uwb.z = filteruwb(uwb.z)+randn(size(uwb.x))*varuwb;
+
+    function vector = filteruwb(vector)
+        %         [var.b,var.a] = butter(2,0.5/10,'low');
+        %         vector = filtfilt(var.b,var.a,vector);
+        vector = smooth(vector,5);
+        vector = smooth(vector,'sgolay',2);
+    end
+end
+
 
 % function [Signals,velocity,clean,acceleration,temporalspecs] = generateAll()
 % te = 15; %sec
@@ -117,3 +160,15 @@ end
 % outsignal = signal + noise;
 % outvar = var;
 % end
+
+
+function str = makeNaNZeroStruct(str)
+str.x = makeNaNZero(str.x);
+str.y = makeNaNZero(str.y);
+str.z = makeNaNZero(str.z);
+end
+
+
+function input = makeNaNZero(input)
+input(isnan(input)) = 0;
+end

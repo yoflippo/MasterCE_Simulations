@@ -17,7 +17,7 @@ for i = 1:ts.n2
         [X, P] = update_2d_acc_varrates(X, P, y, R, H2);
         
         if ts.t(cnt)<=ts.t2(i)
-%             [X, P] = prediction_2d_acc_varrates(X, P, Q1, F1);
+            %             [X, P] = prediction_2d_acc_varrates(X, P, Q1, F1);
             [y, R] = getMeasurementData_varrates(signals,velocity,1,cnt,true);
             [X, P] = update_2d_acc_varrates(X, P, y, R, H1);
             cnt = cnt + 1;
@@ -25,6 +25,9 @@ for i = 1:ts.n2
     end
     X_arr(i, :) = X;
     P_arr(i).M = P;
+    if cnt >= length(ts.t)
+        break
+    end
 end
 close all;
 name = replace(mfilename,'_','\_');

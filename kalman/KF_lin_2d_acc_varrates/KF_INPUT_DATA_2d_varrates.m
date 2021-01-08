@@ -7,7 +7,8 @@ if not(exist(matfilename,'file'))
 else
     load(matfilename);
     [Signals2,velocity2,clean2,acceleration2,temporalspecs2] = generateAll();
-    if (not(isequal(clean.position.x,clean2.position.x)) || ...
+    if (not(isequal(clean.position,clean2.position)) || ...
+            not(isequal(clean.velocity,clean2.velocity)) || ...
             not(isequal(Signals(1).var,Signals2(1).var)) || ...
             not(isequal(temporalspecs2,temporalspecs)) || ...
             not(isequal(velocity(1).var,velocity2(1).var)))
@@ -38,8 +39,10 @@ end
 
 function [Signals,velocity,clean,acceleration,temporalspecs] = generateAll()
 te = 15; %sec
+courtwidth = 10;
+courtheigth = 10;
 
-fs = 8;
+fs = 10;
 dt = 1/fs;
 t=(0:dt:te)';
 n = numel(t);
@@ -49,21 +52,33 @@ dt2 = 1/fs2;
 t2=(0:dt2:te)';
 n2 = numel(t2);
 
-courtwidth = 10;
-courtheigth = 10;
-
 [x,y] = eightshape_variation(t,courtwidth,courtheigth);%ground truth
-[x2,y2] = eightshape_variation(t2,courtwidth,courtheigth);
 clean.position.x = x;
 clean.position.y = y;
+
+[x2,y2] = eightshape_variation(t2,courtwidth,courtheigth);
+% offset = 0;
+% % t_extra = (0:dt2:offset)';
+% t_extra = []; 
+% t2=[t_extra; (t2+offset)];
+% x2_extra = zeros(size(t_extra));
+% x2 = [x2_extra; x2]; y2 = [x2_extra; y2];
+% n2 = numel(t2);
+
 clean.velocity.x = gradient(x2,dt2);
 clean.velocity.y = gradient(y2,dt2);
 
-Signals(1).var = 2*ones(size(t));
+% R = getRotationMatrixZ(40); 
+% R = R(2:end,2:end);
+% CDR = [x2 y2]*R;
+% clean.velocity.x = gradient(CDR(:,1),dt2);
+% clean.velocity.y = gradient(CDR(:,2),dt2);
+
+Signals(1).var = 10*ones(size(t));
 Signals(1).sig.x = generate_signal(x, Signals(1).var);
 Signals(1).sig.y = generate_signal(y, Signals(1).var);
 
-velocity(1).var = ones(length(t2),1)*0.05;
+velocity(1).var = 0.1*ones(size(t2));
 velocity(1).sig.x = generate_signal(clean.velocity.x, velocity(1).var);
 velocity(1).sig.y = generate_signal(clean.velocity.y, velocity(1).var);
 
