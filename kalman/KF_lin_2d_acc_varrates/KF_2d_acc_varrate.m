@@ -3,7 +3,7 @@ function [] = KF_2d_acc_varrate()
 [signals,velocity,clean,acceleration,ts] = KF_INPUT_DATA_2d_varrates();
 cd(fileparts(mfilename('fullpath')));
 
-[X,P,X_arr,Q1,Q2,F1,F2,H1,H2] = setX_P_Xarr_Q_F_2d_acc_varrates(ts);
+[X,P,X_kf,Q1,Q2,F1,F2,H1,H2] = setX_P_Xarr_Q_F_2d_acc_varrates(ts);
 
 % fusion
 cnt = 1;
@@ -23,18 +23,18 @@ for i = 1:ts.n2
             cnt = cnt + 1;
         end
     end
-    X_arr(i, :) = X;
-    P_arr(i).M = P;
+    X_kf(i, :) = X;
+    P_kf(i).M = P;
     if cnt >= length(ts.t)
         break
     end
 end
 close all;
 name = replace(mfilename,'_','\_');
-plotResultsKF_2d_acc_varrates(ts,clean,signals,X_arr,velocity,[name]);
+plotResultsKF_2d_acc_varrates(ts,clean,signals,X_kf,velocity,[name]);
 figure;
-X_arr = rts_smooth(X_arr, P_arr, F2, Q2);
-plotResultsKF_2d_acc_varrates(ts,clean,signals,X_arr,velocity,[name ' RTS']);
+X_kf = rts_smooth(X_kf, P_kf, F2, Q2);
+plotResultsKF_2d_acc_varrates(ts,clean,signals,X_kf,velocity,[name ' RTS']);
 distFig
 end
 

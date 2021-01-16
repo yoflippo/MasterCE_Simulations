@@ -1,4 +1,4 @@
-function [X, P] = update_2d_acc(X, P, y, R, H)
+function [X, P] = update_2d_acc_data(X, P, y, R, H)
 Inn = y - H*X;
 S = H*P*H' + R;
 K = P*H'*inv(S);

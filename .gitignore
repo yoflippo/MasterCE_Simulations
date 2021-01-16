@@ -5,3 +5,4 @@ solvers/output/*
 solvers/dummy_data_sets/*
 *.asv
 distFig_*
+*.mat

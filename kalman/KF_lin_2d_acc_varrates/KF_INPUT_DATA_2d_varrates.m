@@ -40,16 +40,18 @@ end
 function [Signals,velocity,clean,acceleration,temporalspecs] = generateAll()
 te = 15; %sec
 courtwidth = 10;
-courtheigth = 10;
+courtheigth = 20;
 
 fs = 10;
 dt = 1/fs;
-t=(0:dt:te)';
+t = (0:dt:te)';
+t(2:end-1) = t(2:end-1) + abs(randn(size(t(2:end-1)))*dt/10); % add jitter
 n = numel(t);
 
 fs2 = 100;
 dt2 = 1/fs2;
 t2=(0:dt2:te)';
+t2(2:end-1) = t2(2:end-1) + abs(randn(size(t2(2:end-1)))*dt2/10); % add jitter
 n2 = numel(t2);
 
 [x,y] = eightshape_variation(t,courtwidth,courtheigth);%ground truth
@@ -57,26 +59,19 @@ clean.position.x = x;
 clean.position.y = y;
 
 [x2,y2] = eightshape_variation(t2,courtwidth,courtheigth);
-% offset = 0;
-% % t_extra = (0:dt2:offset)';
-% t_extra = []; 
-% t2=[t_extra; (t2+offset)];
-% x2_extra = zeros(size(t_extra));
-% x2 = [x2_extra; x2]; y2 = [x2_extra; y2];
-% n2 = numel(t2);
-
-clean.velocity.x = gradient(x2,dt2);
-clean.velocity.y = gradient(y2,dt2);
-
-% R = getRotationMatrixZ(40); 
-% R = R(2:end,2:end);
-% CDR = [x2 y2]*R;
-% clean.velocity.x = gradient(CDR(:,1),dt2);
-% clean.velocity.y = gradient(CDR(:,2),dt2);
 
 Signals(1).var = 10*ones(size(t));
 Signals(1).sig.x = generate_signal(x, Signals(1).var);
 Signals(1).sig.y = generate_signal(y, Signals(1).var);
+
+% clean.velocity.x = gradient(x2,dt2);
+% clean.velocity.y = gradient(y2,dt2);
+
+R = getRotationMatrixZ(0); 
+R = R(2:end,2:end);
+CDR = [x2 y2]*R;
+clean.velocity.x = gradient(CDR(:,1),dt2);
+clean.velocity.y = gradient(CDR(:,2),dt2);
 
 velocity(1).var = 0.1*ones(size(t2));
 velocity(1).sig.x = generate_signal(clean.velocity.x, velocity(1).var);

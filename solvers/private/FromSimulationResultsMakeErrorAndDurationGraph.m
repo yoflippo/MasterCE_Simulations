@@ -16,8 +16,7 @@ else
     ap.filefull = ap_MAT_file;
 end
 load(ap.filefull);
-ap.output = fullfile(extractBefore(this.Path,'SIMULATION'),'/THESIS/TUD_ENS_MSc_Thesis/Figures');
-
+ap.output = findSubFolderPath(fullfile(extractBefore(this.Path,'UWB'),'UWB'),'UWB','Figures');
 [numSolvers,~] = size(results);
 [~,c] = size(results);
 anchors = [3:2+c];

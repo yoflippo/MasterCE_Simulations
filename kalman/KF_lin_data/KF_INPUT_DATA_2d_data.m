@@ -3,7 +3,7 @@ function [positionuwb,velocity,clean,temporalspecs] = KF_INPUT_DATA_2d_data()
 cd(fileparts(mfilename('fullpath')));
 cd('synced_measurement_data');
 
-load('W_RANG_(~)_RS_01.mat');
+load('W_RANG_(~)_RS_04.mat');
 
 t_v = wmpm.time;
 dt_v = mean(diff(t_v));
@@ -11,7 +11,7 @@ n_v = numel(t_v);
 fs_v = 1/dt_v;
 
 [uwbsl, optisl] = makeSameLength(uwb,opti);
-% uwbsl = improveUWB(uwbsl,100);
+uwbsl = improveUWB(uwbsl,00);
  
 x_p = uwbsl.x;
 y_p = uwbsl.y;
@@ -20,7 +20,6 @@ t_p = uwbsl.time;
 dt_p = mean(diff(t_p));
 n_p = numel(t_p);
 fs_p = 1/dt_p;
-
 
 positionuwb.x = x_p;
 positionuwb.y = y_p;

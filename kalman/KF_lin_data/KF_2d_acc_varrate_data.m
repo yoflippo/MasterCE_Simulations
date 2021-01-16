@@ -17,7 +17,7 @@ for i = 1:ts.n_v
         [X, P] = update_2d_acc_data(X, P, y, R, H2);
         
         if ts.t_p(cnt)<=ts.t_v(i)
-%             [X, P] = prediction_2d_acc_data(X, P, Q1, F1);
+            %              [X, P] = prediction_2d_acc_data(X, P, Q1, F1);
             [y, R] = getMeasurementData_data(signals,velocity,1,cnt,true);
             [X, P] = update_2d_acc_data(X, P, y, R, H1);
             cnt = cnt + 1;

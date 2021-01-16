@@ -24,7 +24,7 @@ anchorfiles= dir('*.mat');
 cd(ap.curPath)
 
 strExtraInfo = 'paperuwbnoise7ancsScaled2';
-solvertypes = {'vinay','larsson','murphy','faber2a'};
+solvertypes = {'larsson','murphy','faber2a'};
 
 [ap,results] = runAllAnchorFiles(ap,nm,anchorfiles,solvertypes);
 saveAllResults(ap,strExtraInfo,results)

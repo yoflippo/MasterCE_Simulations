@@ -17,8 +17,8 @@ X_arr = zeros(n, dim);      % KF filter output through the whole time
 %     0      0   0       0   0.05 0;
 %     0      0   0       0   0   0.5];
 
-Q1 = createQ(dt, 100); %POSITION
-Q2 = createQ(dt2,0.2); %VELOCITY
+Q1 = createQ(dt,1e-1); %POSITION
+Q2 = createQ(dt2,2e2); %VELOCITY
 
 
 F1 = [1 dt 0.5*dt^2 0 0 0;% transition matrix
