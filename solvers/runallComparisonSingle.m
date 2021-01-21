@@ -1,6 +1,6 @@
 function runallComparisonSingle()
+close all; clc;
 
-close all; clc; clearvars;
 mfilename('fullpath');
 ap.curPath = fileparts(mfilename('fullpath'));
 ap.Helper = fullfile(extractBefore(ap.curPath,'SIMULATION'),'SIMULATION','helper');
@@ -31,13 +31,6 @@ saveAllResults(ap,strExtraInfo,results)
 cd(ap.curPath)
 
 
-
-
-
-
-
-
-
     function [ap,results] = runAllAnchorFiles(ap,nm,anchorfiles,solvertypes)
         for nS = 1:length(anchorfiles)
             ap = removeAndCleanDummyDataSet(ap,nm,anchorfiles,nS);
@@ -47,6 +40,7 @@ cd(ap.curPath)
         end
     end
 
+
     function [results] = runSolverForAnchorfile(ap,anchorfiles,solvertypes,nS)
         cd(ap.dummydatasets)
         numAnchors = str2double(anchorfiles(nS).name(regexp(anchorfiles(nS).name,'[0-9]')));   % Extract number of anchors
@@ -54,6 +48,7 @@ cd(ap.curPath)
             results(1,nT) = CompareSolversRunSingle(solvertypes{nT},numAnchors);
         end
     end
+
 
     function createNewDummyDataSet(ap)
         try
@@ -63,6 +58,7 @@ cd(ap.curPath)
         mkdir(ap.dummydatasets)
         create_uwb_dummy_data_combine_path(false)
     end
+
 
     function [ap] = removeAndCleanDummyDataSet(ap,nm,anchorfiles,nS)
         cd(ap.dummydata)
@@ -81,11 +77,13 @@ cd(ap.curPath)
         copyfile(ap.curfile.fig,ap.dummydata);
     end
 
+
     function deleteFileFromStruct(struct)
         for i = 1:length(struct)
             delete(fullfile(struct(i).folder,struct(i).name));
         end
     end
+
 
     function saveAllResults(ap,strExtraInfo,results)
         ap.matFileName = fullfile(ap.dirOutput,[mfilename '_results_' strExtraInfo '.mat']);
@@ -93,5 +91,4 @@ cd(ap.curPath)
         makeLatexTableFromSimulationResults(ap.matFileName);
         FromSimulationResultsMakeErrorAndDurationGraph(ap.matFileName);
     end
-
 end
