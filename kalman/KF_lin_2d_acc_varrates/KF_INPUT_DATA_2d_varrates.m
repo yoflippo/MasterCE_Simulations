@@ -8,13 +8,14 @@ else
     load(matfilename);
     [Signals2,velocity2,clean2,acceleration2,temporalspecs2] = generateAll();
     if (not(isequal(clean.position,clean2.position)) || ...
-            not(isequal(clean.velocity,clean2.velocity)) || ...
             not(isequal(position.var,Signals2.var)) || ...
-            not(isequal(temporalspecs2,temporalspecs)) || ...
-            not(isequal(acceleration2,acceleration)) || ...
+            not(isequal(temporalspecs2.fs,temporalspecs.fs)) || ...
+            not(isequal(temporalspecs2.fs2,temporalspecs.fs2)) || ...
+            not(isequal(temporalspecs2.n,temporalspecs.n)) || ...
+            not(isequal(temporalspecs2.n2,temporalspecs.n2)) || ...
             not(isequal(velocity.var,velocity2.var)))
-        [position,velocity,clean,acceleration,temporalspecs] = generateAll();
         clear Signals2 clean2 velocity2 acceleration2 temporalspecs2
+        [position,velocity,clean,acceleration,temporalspecs] = generateAll();
         save(matfilename);
     end
     clear Signals2 clean2 velocity2 acceleration2 temporalspecs2
@@ -50,23 +51,25 @@ te = 15; %sec
 courtwidth = 10;
 courtheigth = 20;
 
-fs = 10;
-[dt,t,n] = createTemporalSpecificationsWithJitter(fs,te);
-fs2 = 100;
-[dt2,t2,n2] = createTemporalSpecificationsWithJitter(fs2,te);
+fs = 10; [~,t,~] = createTemporalSpecs(fs,te);
+fs2 = 100; 
 
 [x,y] = eightshape_variation(t,courtwidth,courtheigth);%ground truth
 clean.position.x = x;
 clean.position.y = y;
 
+[dt,t,n] = addJitter(fs,te);
+[dt2,t2,n2] = addJitter(fs2,te);
+
 position.var = 10 * ones(size(t));
 position.x = generate_signal(x, position.var);
 position.y = generate_signal(y, position.var);
 
-R = getRotationMatrixZ(32); 
+R = getRotationMatrixZ(32);
 R = R(2:end,2:end);
 [x2,y2] = eightshape_variation(t2,courtwidth,courtheigth);
-CDR = ([x2 y2]+20)*R;
+randomOffset = round(100*randn(1)*randn(1));
+CDR = ([x2 y2]+randomOffset)*R;
 
 position.rotatedoffset.x = CDR(:,1);
 position.rotatedoffset.y = CDR(:,2);
@@ -89,8 +92,8 @@ temporalspecs.dt = dt;
 temporalspecs.dt2 = dt2;
 temporalspecs.n = n;
 temporalspecs.n2 = n2;
-temporalspecs.x2 = x2;
-temporalspecs.y2 = y2;
+position.x2 = x2;
+position.y2 = y2;
 end
 
 function [outsignal, outvar] = generate_signal(signal, var)
@@ -99,9 +102,13 @@ outsignal = signal + noise;
 outvar = var;
 end
 
-function [dt,t,n] = createTemporalSpecificationsWithJitter(samplerate,durationSeconds)
+function [dt,t,n] = createTemporalSpecs(samplerate,durationSeconds)
 dt = 1/samplerate;
 t=(0:dt:durationSeconds)';
-t(2:end-1) = t(2:end-1) + abs(randn(size(t(2:end-1)))*dt/10); % add jitter
 n = numel(t);
+end
+
+function [dt,t,n] = addJitter(samplerate,durationSeconds)
+[dt,t,n] = createTemporalSpecs(samplerate,durationSeconds);
+t(2:end-1) = t(2:end-1) + abs(randn(size(t(2:end-1)))*dt/10);
 end

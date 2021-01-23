@@ -12,8 +12,8 @@ plot(clean.position.x, clean.position.y,'g', 'LineWidth', 2,'DisplayName','clean
 plot(X_arr(:, 1), X_arr(:, 4),'Color',[0 0 1],'LineWidth', 2,'DisplayName','KF result');
 grid on; grid minor; legend
 percentageImprovement = (rmse(signals.x-clean.position.x)+rmse(signals.y-clean.position.y))/ ...
-    (rmse(X_arr(:,1)-ts.x2(1:nOutput))+rmse(X_arr(1:nOutput,4)-ts.y2(1:nOutput)));
-kfImprovement = num2str(round(rmse(X_arr(:,1)-ts.x2(1:nOutput)) + rmse(X_arr(:,4)-ts.y2(1:nOutput)),3));
+    (rmse(X_arr(:,1)-signals.x2(1:nOutput))+rmse(X_arr(1:nOutput,4)-signals.y2(1:nOutput)));
+kfImprovement = num2str(round(rmse(X_arr(:,1)-signals.x2(1:nOutput)) + rmse(X_arr(:,4)-signals.y2(1:nOutput)),3));
 title([add2title  ' xy, RMSE improvement '  num2str(round(percentageImprovement,3)) ' KF rmse: ' kfImprovement])
 axis equal;
 
