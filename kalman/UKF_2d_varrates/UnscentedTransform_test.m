@@ -4,19 +4,19 @@ n = 2;
 alpha = 0.3;
 beta = 2;
 kappa = 0.1;
-mean = [0 0];
-p = [32 15; 15 40];
+x = [0 0];
+P = [32 15; 15 40];
 
-mssp = MerweScaledSigmaPoints(mean,p,alpha,beta,kappa);
+weights = UKF_weights(n,alpha,beta,kappa);
+mssp = MerweScaledSigmaPoints(x,P,weights);
 
-testSigmas = [ 0.     0.   ;
+testSigmas = [0 0;
   3.612  1.934;
   2.496  6.231;
  -3.612  1.934;
  -2.496  6.231];
 
-[x,P] = UnscentedTransform(testSigmas,mssp.WeightsMean,...
-    mssp.WeightsCovariance);
+[x,P] = UnscentedTransform(testSigmas,weights);
 
 Ptest = [101.992380952381,2.84217094304040e-14;
     2.84217094304040e-14,3789.90846457266];

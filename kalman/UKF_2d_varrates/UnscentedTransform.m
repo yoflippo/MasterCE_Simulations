@@ -1,15 +1,15 @@
-function [x,P] = UnscentedTransform(sigmaPoints,Wm,Wc,Q)
+function [x,P] = UnscentedTransform(sigmaPoints,weights,noiseMatrix)
 [~,n] = size(sigmaPoints);
 
-x = Wm * sigmaPoints;
+x = weights.mean * sigmaPoints;
 P = zeros(n,n);
 
 y = sigmaPoints - x;
-P = y' * (diag(Wc) * y);
+P = y' * (diag(weights.covariance) * y);
 
-if not(exist('Q','var'))
-    Q = zeros(size(P));
+if not(exist('noiseMatrix','var'))
+    noiseMatrix = zeros(size(P));
 end
-P = P + Q;
+P = P + noiseMatrix;
 end
 
