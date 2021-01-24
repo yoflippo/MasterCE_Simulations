@@ -51,12 +51,12 @@ te = 15; %sec
 courtwidth = 10;
 courtheigth = 20;
 
-fs = 10; [~,t,~] = createTemporalSpecs(fs,te);
-fs2 = 10; 
+fs = 10;  % position
+fs2 = 100; % velocity
 
+[~,t,~] = createTemporalSpecs(fs,te);
 [x,y] = eightshape_variation(t,courtwidth,courtheigth);%ground truth
-% x = 0:length(t)-1';
-% y = x;
+
 clean.position.x = x;
 clean.position.y = y;
 
@@ -65,7 +65,7 @@ clean.position.y = y;
 [dt,t,n] = createTemporalSpecs(fs,te);
 [dt2,t2,n2] = createTemporalSpecs(fs2,te);
 
-position.var = 1*ones(size(t));
+position.var = 10*ones(size(t));
 position.x = generate_signal(x, position.var);
 position.y = generate_signal(y, position.var);
 
@@ -81,7 +81,7 @@ position.rotatedoffset.y = CDR(:,2);
 clean.velocity.x = gradient(CDR(:,1),dt2);
 clean.velocity.y = gradient(CDR(:,2),dt2);
 
-velocity.var = 0.09 * ones(size(t2));
+velocity.var = 0.5 * ones(size(t2));
 velocity.x = generate_signal(clean.velocity.x, velocity.var);
 velocity.y = generate_signal(clean.velocity.y, velocity.var);
 

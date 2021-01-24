@@ -7,9 +7,9 @@ end
 nOutput = length(X_arr);
 
 idxPosX = 1;
-idxPosY = 3;
+idxPosY = 4;
 idxVelX = 2;
-idxVelY = 4;
+idxVelY = 5;
 
 subplot(3,2,[1 2]);
 plot(position.x, position.y,'r', 'LineWidth', 2,'LineStyle','--','DisplayName','disturbed signal');hold on;
@@ -18,8 +18,7 @@ plot(X_arr(:, idxPosX), X_arr(:, idxPosY),'Color',[0 0 1],'LineWidth', 2,'Displa
 grid on; grid minor; legend
 percentageImprovement = (rmse(position.x-clean.position.x)+rmse(position.y-clean.position.y))/ ...
     (rmse(X_arr(:,1)-position.x2(1:nOutput))+rmse(X_arr(1:nOutput,4)-position.y2(1:nOutput)));
-kfImprovement = num2str(round(rmse(X_arr(:,1)-position.x2(1:nOutput)) + rmse(X_arr(:,4)-position.y2(1:nOutput)),3));
-title([add2title  ' xy, RMSE improvement '  num2str(round(percentageImprovement,3)) ' KF rmse: ' kfImprovement])
+title([add2title  ' xy, RMSE improvement '  num2str(round(percentageImprovement,3))])
 axis equal;
 
 subplot(3,2,3);
