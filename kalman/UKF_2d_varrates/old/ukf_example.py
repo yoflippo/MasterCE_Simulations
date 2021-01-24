@@ -56,12 +56,14 @@ ukf.Q[0:2, 0:2] = Q_discrete_white_noise(2, dt=1, var=0.02)
 ukf.Q[2:4, 2:4] = Q_discrete_white_noise(2, dt=1, var=0.02)
 
 uxs = []
+covs = []
 for z in zs:
     ukf.predict()
     ukf.update(z)
     uxs.append(ukf.x.copy())
+    covs.append(ukf.P.copy())
 uxs = np.array(uxs)
-
+Ms, P, K = ukf.rts_smoother(uxs, covs)
 plt.plot(uxs[:, 0], uxs[:, 2])
 # print(f'UKF standard deviation {np.std(uxs - xs):.3f} meters')
 plt.show()

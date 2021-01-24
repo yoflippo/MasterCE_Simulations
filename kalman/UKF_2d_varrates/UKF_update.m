@@ -1,15 +1,11 @@
-function [x, P] = UKF_update(z,R,x,P,sigmaPoints_f,weights,handleH)
+function [x, P] = UKF_update(z,R,x,P,sigmaPoints_F,weights,handleH)
 
-sigmaPoints_H = handleH(sigmaPoints_f);
+sigmaPoints_H = handleH(sigmaPoints_F);
 [uz,Pz] = UnscentedTransform(sigmaPoints_H,weights,R);
 
-Pxz = zeros(length(x),length(z));
-for i = 1:length(sigmaPoints_f)
-    Pxz = Pxz + (weights.covariance(i) * (sigmaPoints_f(i,:)-x)'.*(sigmaPoints_H(i,:)-uz));
-end
+Pxz = UKF_cross_variance(x,uz,weights,sigmaPoints_F,sigmaPoints_H);
 
 K = Pxz*inv(Pz);
-x = x' + (K * (z'-uz)');
+x = x + (K * (z'-uz)')';
 P = P - K*Pz*K';
-x = x';
 end
