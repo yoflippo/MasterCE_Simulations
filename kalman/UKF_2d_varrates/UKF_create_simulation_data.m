@@ -1,4 +1,4 @@
-function [position,velocity,clean,acceleration,temporalspecs] = datagen_UKF_2d_varrates()
+function [position,velocity,clean,acceleration,temporalspecs] = UKF_create_simulation_data()
 matfilename = [mfilename '.mat'];
 cd(fileparts(mfilename('fullpath')));
 if not(exist(matfilename,'file'))
@@ -47,23 +47,29 @@ end
 end
 
 function [position,velocity,clean,acceleration,temporalspecs] = generateAll()
-te = 15; %sec
+te = 100; %sec
 courtwidth = 10;
 courtheigth = 20;
 
-fs = 10; [~,t,~] = createTemporalSpecs(fs,te);
-fs2 = 100; 
+fs = 1; [~,t,~] = createTemporalSpecs(fs,te);
+fs2 = 1; 
 
-[x,y] = eightshape_variation(t,courtwidth,courtheigth);%ground truth
+% [x,y] = eightshape_variation(t,courtwidth,courtheigth);%ground truth
+x = 0:length(t)-1';
+y = x;
 clean.position.x = x;
 clean.position.y = y;
 
-[dt,t,n] = addJitter(fs,te);
-[dt2,t2,n2] = addJitter(fs2,te);
+% [dt,t,n] = addJitter(fs,te);
+% [dt2,t2,n2] = addJitter(fs2,te);
+[dt,t,n] = createTemporalSpecs(fs,te);
+[dt2,t2,n2] = createTemporalSpecs(fs2,te);
 
-position.var = 10 * ones(size(t));
+position.var = 0.09 * ones(size(t));
 position.x = generate_signal(x, position.var);
 position.y = generate_signal(y, position.var);
+
+position.var = 0.09 * ones(size(position.y));
 
 R = getRotationMatrixZ(32);
 R = R(2:end,2:end);
@@ -76,7 +82,7 @@ position.rotatedoffset.y = CDR(:,2);
 clean.velocity.x = gradient(CDR(:,1),dt2);
 clean.velocity.y = gradient(CDR(:,2),dt2);
 
-velocity.var = 0.1 * ones(size(t2));
+velocity.var = 0.09 * ones(size(t2));
 velocity.x = generate_signal(clean.velocity.x, velocity.var);
 velocity.y = generate_signal(clean.velocity.y, velocity.var);
 
@@ -97,6 +103,11 @@ position.y2 = y2;
 end
 
 function [outsignal, outvar] = generate_signal(signal, var)
+[rowSignal,columnsSignal] = size(signal);
+[rowVar,columnVar] = size(var);
+if rowSignal ~= rowVar || columnsSignal ~= columnVar
+   var = var' ;
+end
 noise = randn(size(signal)).*sqrt(var);
 outsignal = signal + noise;
 outvar = var;

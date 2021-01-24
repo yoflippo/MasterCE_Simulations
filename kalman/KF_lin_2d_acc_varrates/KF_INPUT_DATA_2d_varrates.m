@@ -6,7 +6,7 @@ if not(exist(matfilename,'file'))
     save(matfilename);
 else
     load(matfilename);
-    [Signals2,velocity2,clean2,acceleration2,temporalspecs2] = generateAll();
+    [Signals2,velocity2,clean2,~,temporalspecs2] = generateAll();
     if (not(isequal(clean.position,clean2.position)) || ...
             not(isequal(position.var,Signals2.var)) || ...
             not(isequal(temporalspecs2.fs,temporalspecs.fs)) || ...
@@ -34,6 +34,8 @@ if isequal(nargout,0)
     subplot(3,2,3);
     plot(t2,velocity.x,'DisplayName','velx');  grid on; grid minor; hold on;
     plot(t2,velocity.y,'DisplayName','vely');
+    plot(t2,clean.velocity.x,'DisplayName','clean vel x');  grid on; grid minor; hold on;
+    plot(t2,clean.velocity.y,'DisplayName','clean vel y');
     
     subplot(3,2,5);
     plot(t2,acceleration.x,'DisplayName','accx');  grid on; grid minor; hold on;
@@ -52,20 +54,22 @@ courtwidth = 10;
 courtheigth = 20;
 
 fs = 10; [~,t,~] = createTemporalSpecs(fs,te);
-fs2 = 100; 
+fs2 = 100;
 
 [x,y] = eightshape_variation(t,courtwidth,courtheigth);%ground truth
 clean.position.x = x;
 clean.position.y = y;
 
-[dt,t,n] = addJitter(fs,te);
-[dt2,t2,n2] = addJitter(fs2,te);
+% [dt,t,n] = addJitter(fs,te);
+% [dt2,t2,n2] = addJitter(fs2,te);
+[dt,t,n] = createTemporalSpecs(fs,te);
+[dt2,t2,n2] = createTemporalSpecs(fs2,te);
 
 position.var = 10 * ones(size(t));
 position.x = generate_signal(x, position.var);
 position.y = generate_signal(y, position.var);
 
-R = getRotationMatrixZ(32);
+R = getRotationMatrixZ(randWithinBounds(11,80));
 R = R(2:end,2:end);
 [x2,y2] = eightshape_variation(t2,courtwidth,courtheigth);
 randomOffset = round(100*randn(1)*randn(1));

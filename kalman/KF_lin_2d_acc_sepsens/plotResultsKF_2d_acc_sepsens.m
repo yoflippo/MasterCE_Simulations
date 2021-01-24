@@ -1,4 +1,4 @@
-function plotResultsKF_2d_acc(t,clean,signals,X_arr,velocity,add2title)
+function plotResultsKF_2d_acc_sepsens(t,clean,signals,X_arr,velocity,add2title)
 if not(exist('add2title','var'))
     add2title = '';
 else

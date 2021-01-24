@@ -1,11 +1,15 @@
-function [X, P] = UKF_update(X, P, y, R, H)
-Inn = y - H*X;
-S = H*P*H' + R;
-K = P*H'*inv(S);
+function [x, P] = UKF_update(z,R,x,P,sigmaPoints_f,weights,handleH)
 
-X = X + K*Inn;
-% P = P - K*H*P;
-%% joseph equation: for non-optimal Kalman Gain
-A = eye(size(P))-K*H;
-P = A*P*A' + K*R*K'; 
+sigmaPoints_H = handleH(sigmaPoints_f);
+[uz,Pz] = UnscentedTransform(sigmaPoints_H,weights,R);
+
+Pxz = zeros(length(x),length(z));
+for i = 1:length(sigmaPoints_f)
+    Pxz = Pxz + (weights.covariance(i) * (sigmaPoints_f(i,:)-x)'.*(sigmaPoints_H(i,:)-uz));
+end
+
+K = Pxz*inv(Pz);
+x = x' + (K * (z'-uz)');
+P = P - K*Pz*K';
+x = x';
 end

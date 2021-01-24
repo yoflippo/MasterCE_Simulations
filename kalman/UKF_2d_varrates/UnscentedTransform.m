@@ -1,8 +1,5 @@
 function [x,P] = UnscentedTransform(sigmaPoints,weights,noiseMatrix)
-[~,n] = size(sigmaPoints);
-
 x = weights.mean * sigmaPoints;
-P = zeros(n,n);
 
 y = sigmaPoints - x;
 P = y' * (diag(weights.covariance) * y);
