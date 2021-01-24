@@ -47,16 +47,16 @@ end
 end
 
 function [position,velocity,clean,acceleration,temporalspecs] = generateAll()
-te = 100; %sec
+te = 15; %sec
 courtwidth = 10;
 courtheigth = 20;
 
-fs = 1; [~,t,~] = createTemporalSpecs(fs,te);
-fs2 = 1; 
+fs = 10; [~,t,~] = createTemporalSpecs(fs,te);
+fs2 = 10; 
 
-% [x,y] = eightshape_variation(t,courtwidth,courtheigth);%ground truth
-x = 0:length(t)-1';
-y = x;
+[x,y] = eightshape_variation(t,courtwidth,courtheigth);%ground truth
+% x = 0:length(t)-1';
+% y = x;
 clean.position.x = x;
 clean.position.y = y;
 
@@ -65,16 +65,15 @@ clean.position.y = y;
 [dt,t,n] = createTemporalSpecs(fs,te);
 [dt2,t2,n2] = createTemporalSpecs(fs2,te);
 
-position.var = 0.09 * ones(size(t));
+position.var = 1*ones(size(t));
 position.x = generate_signal(x, position.var);
 position.y = generate_signal(y, position.var);
 
-position.var = 0.09 * ones(size(position.y));
-
-R = getRotationMatrixZ(32);
+R = getRotationMatrixZ(0);
 R = R(2:end,2:end);
 [x2,y2] = eightshape_variation(t2,courtwidth,courtheigth);
-randomOffset = round(100*randn(1)*randn(1));
+% randomOffset = round(100*randn(1)*randn(1));
+randomOffset = 0;
 CDR = ([x2 y2]+randomOffset)*R;
 
 position.rotatedoffset.x = CDR(:,1);

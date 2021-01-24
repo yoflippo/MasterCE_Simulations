@@ -40,28 +40,28 @@ end
 
 end
 
-function [dt,t,n,Signals,velocity,clean,acceleration] = generateAll()
-dt = 1/100;% time step
+function [dt,t,n,position,velocity,clean,acceleration] = generateAll()
+dt = 1/10;% time step
 t=(0:dt:15)';
 n = numel(t);
-[x,y] = eightshape_variation(t,10,10);%ground truth
+[x,y] = eightshape_variation(t,10,20);%ground truth
 clean.position.x = x;
 clean.position.y = y;
 clean.velocity.x = gradient(clean.position.x,dt);
 clean.velocity.y = gradient(clean.position.y,dt);
 
-Signals(1).var = 1*ones(size(t));
-Signals(1).sig.x = generate_signal(clean.position.x, Signals(1).var);
-Signals(1).sig.y = generate_signal(clean.position.y, Signals(1).var);
-Signals(2).var = 0.1*(cos(8*t)+10*t);
-Signals(2).sig.x = generate_signal(clean.position.x, Signals(2).var);
-Signals(2).sig.y = generate_signal(clean.position.y, Signals(2).var);
-Signals(3).var = 0.1*(sin(2*t)+10);
-Signals(3).sig.x = generate_signal(clean.position.x, Signals(3).var);
-Signals(3).sig.y = generate_signal(clean.position.y, Signals(3).var);
-Signals(4).var = 0.1*ones(size(t));
-Signals(4).sig.x = generate_signal(clean.position.x, Signals(4).var);
-Signals(4).sig.y = generate_signal(clean.position.y, Signals(4).var);
+position(1).var = 1*ones(size(t));
+position(1).sig.x = generate_signal(clean.position.x, position(1).var);
+position(1).sig.y = generate_signal(clean.position.y, position(1).var);
+position(2).var = 0.1*(cos(8*t)+10*t);
+position(2).sig.x = generate_signal(clean.position.x, position(2).var);
+position(2).sig.y = generate_signal(clean.position.y, position(2).var);
+position(3).var = 0.1*(sin(2*t)+10);
+position(3).sig.x = generate_signal(clean.position.x, position(3).var);
+position(3).sig.y = generate_signal(clean.position.y, position(3).var);
+position(4).var = 0.1*ones(size(t));
+position(4).sig.x = generate_signal(clean.position.x, position(4).var);
+position(4).sig.y = generate_signal(clean.position.y, position(4).var);
 
 velocity(1).var = ones(length(t),1)*0.05;
 velocity(1).sig.x = generate_signal(clean.velocity.x, velocity(1).var);

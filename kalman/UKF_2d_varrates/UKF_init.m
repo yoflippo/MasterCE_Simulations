@@ -6,5 +6,7 @@ function [x, P] = UKF_init(y)
 % P = eye(numel(x)).*ones(1,numel(x))*5;
 % x = x';
 x = zeros(1,4);
+x(1) = y(1);
+x(3) = y(2);
 P = eye(numel(x)).*ones(1,numel(x))*1;
 end

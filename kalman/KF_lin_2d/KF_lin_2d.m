@@ -19,8 +19,10 @@ for i = 1:n
     P_arr(i).M = P;
 end
 name = replace(mfilename,'_','\_');
-plotResultsKF_2d(t,clean,signals,X_arr,velocity,[name]);
 figure;
-X_arr = rts_smooth(X_arr, P_arr, F, Q);
-plotResultsKF_2d(t,clean,signals,X_arr,velocity,[name ' RTS']);
+plotResultsKF_2d(t,clean,signals,X_arr,velocity,[name]);
+% figure;
+% X_arr = rts_smooth(X_arr, P_arr, F, Q);
+% plotResultsKF_2d(t,clean,signals,X_arr,velocity,[name ' RTS']);
+distFig
 end

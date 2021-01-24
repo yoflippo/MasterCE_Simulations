@@ -4,19 +4,19 @@ function [] = UKF_main_linear_variablerates()
 cd(fileparts(mfilename('fullpath')));
 
 % [x,P,X_kf,Q1,Q2,F1,F2,H1,H2] = setX_P_Xarr_Q_F_2d_acc_varrates(ts);
-Q1 = [0.005 0.01 0 0;
-    0.01 0.02 0 0;
-    0 0 0.005 0.01;
-    0 0 0.01 0.02;];
+Q1 = [0.02   0 0  0;% system noise
+     0 0.05 0  0;
+     0 0   0.02  0;
+     0 0   0  0.05];
 
 cnt = 1;
 for i = 1:ts.n2
     if i == 1
-%         z = UKF_get_measurement_sample(position,velocity,1,i,1);
-        [x, P] = UKF_init();
+        z = UKF_get_measurement_sample(position,velocity,1,i,1);
+        [x, P] = UKF_init(z);
     end
     
-    weights = UKF_weights(length(x),0.1,2,1);
+    weights = UKF_weights(length(x),1,2,1);
     sigmaPoints = MerweScaledSigmaPoints(x,P,weights);
     [x, P,sigmaPoints_f] = UKF_predict(sigmaPoints,weights, Q1, @UKF_f, ts.dt);
     [z, R] = UKF_get_measurement_sample(position,velocity,1,i,1);
@@ -38,6 +38,7 @@ for i = 1:ts.n2
 end
 close all;
 name = replace(mfilename,'_','\_');
+figure;
 UKF_plot_results(ts,clean,position,X_kf,velocity,[name]);
 % figure;
 % X_kf = rts_smooth(X_kf, P_kf, F2, Q2);

@@ -14,9 +14,13 @@ F = [1 dt 0 0;% transition matrix
      0 0  1 dt;
      0 0  0 1];
  
+% % %  %% Pos and VEl
+% % %  H = [1 0 0 0;
+% % %       0 1 0 0;
+% % %       0 0 1 0;
+% % %       0 0 0 1;];% observation matrix
+
  H = [1 0 0 0;
-      0 1 0 0;
-      0 0 1 0;
-      0 0 0 1;];% observation matrix
+      0 0 1 0;];% observation matrix
 end
 
