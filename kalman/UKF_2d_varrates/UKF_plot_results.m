@@ -17,8 +17,7 @@ plot(position.x, position.y,'r', 'LineWidth', 2,'LineStyle','--','DisplayName','
 plot(clean.position.x, clean.position.y,'g', 'LineWidth', 2,'DisplayName','clean signal');
 plot(X_arr(:, idxPosX), X_arr(:, idxPosY),'Color',[0 0 1],'LineWidth', 2,'DisplayName','KF result');
 grid on; grid minor; legend
-percentageImprovement = (rmse(position.x-clean.position.x)+rmse(position.y-clean.position.y))/ ...
-    (rmse(X_arr(:,1)-position.x2(1:nOutput))+rmse(X_arr(1:nOutput,4)-position.y2(1:nOutput)));
+percentageImprovement = rmse(X_arr(:,idxPosX)-position.x2(1:nOutput));
 title([add2title  ' xy, RMSE improvement '  num2str(round(percentageImprovement,3))])
 axis equal;
 
