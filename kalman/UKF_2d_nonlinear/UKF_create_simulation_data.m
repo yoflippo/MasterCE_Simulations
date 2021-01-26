@@ -49,9 +49,10 @@ if isequal(nargout,0)
     
     subplot(3,2,[2 4]);
     plot(clean.position.x,clean.position.y);  grid on; grid minor; hold on;
-    plot(position.rotatedoffset.x,position.rotatedoffset.y); axis equal; title('x-y');
+    plot(position.rotatedoffset.x,position.rotatedoffset.y); 
+    plot(position.x,position.y);axis equal; title('x-y');
     
-    subplot(3,2,[6]);
+    subplot(3,2,6);
     plot(t2,velocity.angularRate);  grid on; grid minor; hold on; title('Angular rate');
 end
 
@@ -62,11 +63,11 @@ te = 15; %sec
 courtwidth = 10;
 courtheigth = 20;
 
-fs = 10;  % position
+fs = 50;  % position
 fs2 = 100; % velocity
 
 [~,t,~] = createTemporalSpecs(fs,te);
-[x,y] = eightshape_variation(t,courtwidth,courtheigth);%ground truth
+[xrot,yrot,x,y] = rotateAndAddOffset(t,courtwidth,courtheigth);%ground truth
 
 clean.position.x = x;
 clean.position.y = y;
@@ -80,16 +81,12 @@ position.var = 10*ones(size(t));
 position.x = generate_signal(x, position.var);
 position.y = generate_signal(y, position.var);
 
-R = getRotationMatrixZ(randWithinBounds(5,85));
-R = R(2:end,2:end);
-[x2,y2] = eightshape_variation(t2,courtwidth,courtheigth);
-randomOffset = round(100*randn(1)*randn(1));
-CDR = ([x2 y2]+randomOffset)*R;
+[x2rot,y2rot,x2,y2] = rotateAndAddOffset(t2,courtwidth,courtheigth);
 
-position.rotatedoffset.x = CDR(:,1);
-position.rotatedoffset.y = CDR(:,2);
-clean.velocity.x = gradient(CDR(:,1),dt2);
-clean.velocity.y = gradient(CDR(:,2),dt2);
+position.rotatedoffset.x = x2rot;
+position.rotatedoffset.y = y2rot;
+clean.velocity.x = gradient(x2rot,dt2);
+clean.velocity.y = gradient(y2rot,dt2);
 
 velocity.var = 0.5 * ones(size(t2));
 velocity.x = generate_signal(clean.velocity.x, velocity.var); %rotated
@@ -148,7 +145,7 @@ end
 
 function angles = calculateAnglesBetweenXYpoints(x,y)
 angles = calculateAngleBasedOn3Points(x,y);
-angles = [0 0 angles];
+angles = [0; 0; angles];
 % close all;
 % angularRate =  gradient(angles,dt);
 % subplot(3,2,1); plot(x); hold on; plot(y); title('positions'); grid on;
@@ -164,10 +161,21 @@ angles = [0 0 angles];
             vector1 = point2 - point1;
             vector2 = point3 - point1;
             if isLeft(point1,point2,point3)
-                angles(n) = angleBetweenVectors(vector1,vector2);
+                angles(n,1) = angleBetweenVectors(vector1,vector2);
             else
-                angles(n) = -angleBetweenVectors(vector2,vector1);
+                angles(n,1) = -angleBetweenVectors(vector2,vector1);
             end
         end
     end
+end
+
+
+function [xrot,yrot,x,y] = rotateAndAddOffset(t,courtwidth,courtheigth)
+R = getRotationMatrixZ(35);
+R = R(2:end,2:end);
+[x,y] = eightshape_variation(t,courtwidth,courtheigth);
+randomOffset = 25;
+CDR = ([x y]+randomOffset)*R;
+xrot = CDR(:,1);
+yrot = CDR(:,2);
 end

@@ -10,7 +10,7 @@ if not(exist('kappa','var')) || isempty(kappa)
     kappa = 3-n;
 end
 
-lambda = (alpha^2)*(n+kappa)-n;
+lambda = ((alpha^2)*(n+kappa))-n;
 
 Wm(1) = lambda/(n+lambda); %Weight mean
 Wc(1) = Wm(1) + (1-alpha^2 + beta); %Weight covariance (P)

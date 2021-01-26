@@ -1,4 +1,4 @@
-function UKF_plot_results(ts,clean,position,X_arr,velocity,add2title)
+function UKF_lin_plot_results(ts,clean,position,X_arr,velocity,add2title)
 figure;
 if not(exist('add2title','var'))
     add2title = '';

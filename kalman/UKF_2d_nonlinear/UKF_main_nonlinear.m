@@ -1,4 +1,4 @@
-function [] = UKF_main_linear_variablerates()
+function [] = UKF_main_nonlinear()
 
 [position,velocity,clean,acceleration,ts] = UKF_create_simulation_data();
 cd(fileparts(mfilename('fullpath')));
@@ -6,13 +6,13 @@ cd(fileparts(mfilename('fullpath')));
 cnt = 1;
 for i = 1:ts.n2
     if i == 1
-        z = UKF_get_measurement_sample(position,velocity,1,i,1);
-        [x, P] = UKF_init(z);
-        weights = UKF_weights(length(x));
+        [z, R] = UKF_get_measurement_sample(position,velocity,1,i,1,true);
+        [x, P] = UKF_init(z,R);
+        weights = UKF_weights(length(x),0.1,2,1);
     end
     
     sigmaPoints = MerweScaledSigmaPoints(x,P,weights);
-    [x, P,sigmaPoints_f] = UKF_predict(sigmaPoints,weights, UKF_Q(ts.dt2), @UKF_f, ts.dt2);
+    [x, P,sigmaPoints_f] = UKF_predict(sigmaPoints,weights, @UKF_Q, @UKF_f, ts.dt2);
     [z, R] = UKF_get_measurement_sample(position,velocity,1,i,0);
     [x, P] = UKF_update(z,R,x,P,sigmaPoints_f,weights,@UKF_h_vel);
     

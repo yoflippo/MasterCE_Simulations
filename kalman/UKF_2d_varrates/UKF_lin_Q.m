@@ -1,4 +1,4 @@
-function Q = UKF_Q(dt,variance)
+function Q = UKF_lin_Q(dt,variance)
 
 if not(exist('variance','var'))
     variance = 1;

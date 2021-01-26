@@ -1,4 +1,4 @@
-function [y,R] = UKF_get_measurement_sample(position,velocity,n,i,boolPosition)
+function [y,R] = UKF_lin_get_measurement_sample(position,velocity,n,i,boolPosition)
 if not(exist('boolPosition','var'))
     boolPosition = false;
 end

@@ -1,4 +1,4 @@
-function weights = UKF_weights(n,alpha,beta,kappa)
+function weights = UKF_lin_weights(n,alpha,beta,kappa)
 
 if not(exist('alpha','var')) || isempty(alpha)
     alpha = 0.1; % 0 <= alpha <= 1, larger = more spread
@@ -10,7 +10,7 @@ if not(exist('kappa','var')) || isempty(kappa)
     kappa = 3-n;
 end
 
-lambda = (alpha^2)*(n+kappa)-n;
+lambda = ((alpha^2)*(n+kappa))-n;
 
 Wm(1) = lambda/(n+lambda); %Weight mean
 Wc(1) = Wm(1) + (1-alpha^2 + beta); %Weight covariance (P)

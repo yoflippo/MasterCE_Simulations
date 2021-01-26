@@ -1,4 +1,4 @@
-function [x, P] = UKF_init(y)
+function [x, P] = UKF_lin_init(y)
 % x(1:2) = y(1:2);
 % x(3) = 0; 
 % x(4:5) = y(3:4);

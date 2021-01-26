@@ -7,7 +7,7 @@ kappa = 0.1;
 x = [0 0];
 P = [32 15; 15 40];
 
-weights = UKF_weights(n,alpha,beta,kappa);
+weights = UKF_lin_weights(n,alpha,beta,kappa);
 mssp = MerweScaledSigmaPoints(x,P,weights);
 
 testSigmas = [0 0;
