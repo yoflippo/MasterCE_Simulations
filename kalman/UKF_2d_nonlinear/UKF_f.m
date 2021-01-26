@@ -6,7 +6,7 @@ end
 
 function F = transitionMatrix(sp,dt)
 F(1) = sp(1)  +  sp(6) * cosd(sp(3)) * dt;
-F(2) = sp(1)  +  sp(6) * sind(sp(3)) * dt;
+F(2) = sp(2)  +  sp(6) * sind(sp(3)) * dt;
 F(3) = sp(3)  +  sp(4) * dt;
 F(4) = sp(4)  +  sp(5) * dt;
 F(5) = sp(5);

@@ -1,4 +1,4 @@
-function [position,velocity,clean,acceleration,temporalspecs] = UKF_create_simulation_data(blRenewData)
+function [position,velocity,acceleration,clean,temporalspecs] = UKF_create_simulation_data(blRenewData)
 if not(exist('blRenewData','var'))
     blRenewData = false;
 end
@@ -6,20 +6,20 @@ end
 matfilename = [mfilename '.mat'];
 cd(fileparts(mfilename('fullpath')));
 if not(exist(matfilename,'file')) || blRenewData
-    [position,velocity,clean,acceleration,temporalspecs] = generateAll();
+    [position,velocity,acceleration,clean,temporalspecs] = generateAll();
     save(matfilename);
 else
     load(matfilename);
-    [Signals2,velocity2,clean2,acceleration2,temporalspecs2] = generateAll();
+    [position2,velocity2,acceleration2,clean2,temporalspecs2] = generateAll();
     if (not(isequal(clean.position,clean2.position)) || ...
-            not(isequal(position.var,Signals2.var)) || ...
+            not(isequal(position.var,position2.var)) || ...
             not(isequal(temporalspecs2.fs,temporalspecs.fs)) || ...
             not(isequal(temporalspecs2.fs2,temporalspecs.fs2)) || ...
             not(isequal(temporalspecs2.n,temporalspecs.n)) || ...
             not(isequal(temporalspecs2.n2,temporalspecs.n2)) || ...
             not(isequal(velocity.var,velocity2.var)))
-        clear Signals2 clean2 velocity2 acceleration2 temporalspecs2
-        [position,velocity,clean,acceleration,temporalspecs] = generateAll();
+        clear position2 clean2 velocity2 acceleration2 temporalspecs2
+        [position,velocity,acceleration,clean,temporalspecs] = generateAll();
         save(matfilename);
     end
     clear Signals2 clean2 velocity2 acceleration2 temporalspecs2
@@ -58,12 +58,12 @@ end
 
 end
 
-function [position,velocity,clean,acceleration,temporalspecs] = generateAll()
+function [position,velocity,acceleration,clean,tspecs] = generateAll()
 te = 10; %sec
 courtwidth = 10;
 courtheigth = 20;
 
-fs = 10;  % position
+fs = 100;  % position
 fs2 = 100; % velocity
 
 [~,t,~] = createTemporalSpecs(fs,te);
@@ -77,7 +77,7 @@ clean.position.y = y;
 [dt,t,n] = createTemporalSpecs(fs,te);
 [dt2,t2,n2] = createTemporalSpecs(fs2,te);
 
-position.var = 10*ones(size(t));
+position.var = 1*ones(size(t));
 position.x = generate_signal(x, position.var);
 position.y = generate_signal(y, position.var);
 
@@ -94,10 +94,10 @@ velocity.x = generate_signal(clean.velocity.x, velocity.var); %rotated
 velocity.y = generate_signal(clean.velocity.y, velocity.var); %rotated
 velocity.res = sqrt(velocity.x.^2 + velocity.y.^2);
 
-clean.velocity.angles = calculateAnglesBetweenXYpoints(position.rotatedoffset.x,position.rotatedoffset.y,dt2);
+clean.velocity.angles = calculateAnglesBetweenXYpoints(x2rot,y2rot,dt2);
 clean.velocity.angularRate = gradient(clean.velocity.angles,dt2);
 
-velocity.varAngles = 0.05*ones(size(t2));
+velocity.varAngles = 0.1*ones(size(t2));
 velocity.angles = clean.velocity.angles;
 velocity.angularRate = generate_signal(gradient(velocity.angles,dt2),velocity.varAngles);
 
@@ -106,14 +106,14 @@ acceleration.x = gradient(velocity.x,dt2);
 acceleration.y = gradient(velocity.y,dt2);
 acceleration.res = gradient(velocity.res,dt2);
 
-temporalspecs.fs = fs;
-temporalspecs.fs2 = fs2;
-temporalspecs.t = t;
-temporalspecs.t2 = t2;
-temporalspecs.dt = dt;
-temporalspecs.dt2 = dt2;
-temporalspecs.n = n;
-temporalspecs.n2 = n2;
+tspecs.fs = fs;
+tspecs.fs2 = fs2;
+tspecs.t = t;
+tspecs.t2 = t2;
+tspecs.dt = dt;
+tspecs.dt2 = dt2;
+tspecs.n = n;
+tspecs.n2 = n2;
 position.x2 = x2;
 position.y2 = y2;
 end
@@ -191,7 +191,7 @@ end
 
 
 function [xrot,yrot,x,y] = rotateAndAddOffset(t,courtwidth,courtheigth)
-R = getRotationMatrixZ(0);
+R = getRotationMatrixZ(66);
 R = R(2:end,2:end);
 [x,y] = eightshape_variation(t,courtwidth,courtheigth);
 randomOffset = 25;

@@ -31,7 +31,7 @@ function angle = initAngleBasedOnUWB(position)
 w = 3;
 pos1.x = mean(position.x(1:w));
 pos1.y = mean(position.y(1:w));
-pos2.x = mean(position.x(w+1:w*2));
-pos2.y = mean(position.y(w+1:w*2));
+pos2.x = mean(position.x(w+1:(2*w)+1));
+pos2.y = mean(position.y(w+1:(2*w)+1));
 angle = atan2d(pos2.x-pos1.x,pos2.y-pos1.y);
 end

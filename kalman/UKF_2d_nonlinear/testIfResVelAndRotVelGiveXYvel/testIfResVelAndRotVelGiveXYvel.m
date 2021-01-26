@@ -26,7 +26,8 @@ subplot(3,3,nsp); nsp = nsp + 1;
 startAngle = atan2d((position.x2(2)-position.x2(1)),(position.y2(2)-position.y2(1)));
 Angles = cumtrapz(clean.velocity.angularRate)/temporalspecs.fs2;
 plot(Angles,'DisplayName','Angles between points','Color','m');
-grid on; grid minor; title('Angles');
+plot(clean.velocity.angles,'DisplayName','Clean angles between points','Color','g');
+grid on; grid minor; title('Angles between points');
 
 subplot(3,3,nsp); nsp = nsp + 1;
 startAngle = atan2d((position.x2(2)-position.x2(1)),(position.y2(2)-position.y2(1)));
