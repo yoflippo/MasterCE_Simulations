@@ -1,6 +1,6 @@
 function [position,velocity,clean,acceleration,temporalspecs] = UKF_create_simulation_data(blRenewData)
 if not(exist('blRenewData','var'))
-   blRenewData = false; 
+    blRenewData = false;
 end
 
 matfilename = [mfilename '.mat'];
@@ -49,7 +49,7 @@ if isequal(nargout,0)
     
     subplot(3,2,[2 4]);
     plot(clean.position.x,clean.position.y);  grid on; grid minor; hold on;
-    plot(position.rotatedoffset.x,position.rotatedoffset.y); 
+    plot(position.rotatedoffset.x,position.rotatedoffset.y);
     plot(position.x,position.y);axis equal; title('x-y');
     
     subplot(3,2,6);
@@ -59,11 +59,11 @@ end
 end
 
 function [position,velocity,clean,acceleration,temporalspecs] = generateAll()
-te = 15; %sec
+te = 10; %sec
 courtwidth = 10;
 courtheigth = 20;
 
-fs = 50;  % position
+fs = 10;  % position
 fs2 = 100; % velocity
 
 [~,t,~] = createTemporalSpecs(fs,te);
@@ -87,18 +87,19 @@ position.rotatedoffset.x = x2rot;
 position.rotatedoffset.y = y2rot;
 clean.velocity.x = gradient(x2rot,dt2);
 clean.velocity.y = gradient(y2rot,dt2);
+clean.velocity.res =  sqrt(clean.velocity.x.^2 + clean.velocity.y.^2);
 
 velocity.var = 0.5 * ones(size(t2));
 velocity.x = generate_signal(clean.velocity.x, velocity.var); %rotated
 velocity.y = generate_signal(clean.velocity.y, velocity.var); %rotated
 velocity.res = sqrt(velocity.x.^2 + velocity.y.^2);
 
-clean.velocity.angles = calculateAnglesBetweenXYpoints(position.rotatedoffset.x,position.rotatedoffset.y);
+clean.velocity.angles = calculateAnglesBetweenXYpoints(position.rotatedoffset.x,position.rotatedoffset.y,dt2);
 clean.velocity.angularRate = gradient(clean.velocity.angles,dt2);
 
-velocity.varAngles = 0.005*ones(size(t2));
+velocity.varAngles = 0.05*ones(size(t2));
 velocity.angles = clean.velocity.angles;
-velocity.angularRate = generate_signal(gradient(velocity.angles,dt2),velocity.varAngles); 
+velocity.angularRate = generate_signal(gradient(velocity.angles,dt2),velocity.varAngles);
 
 acceleration.var = ones(length(t),1)*2;
 acceleration.x = gradient(velocity.x,dt2);
@@ -143,15 +144,11 @@ t(2:end-1) = t(2:end-1) + abs(randn(size(t(2:end-1)))*dt/10);
 end
 
 
-function angles = calculateAnglesBetweenXYpoints(x,y)
+function angles = calculateAnglesBetweenXYpoints(x,y,dt)
 angles = calculateAngleBasedOn3Points(x,y);
 angles = [0; 0; angles];
-% close all;
-% angularRate =  gradient(angles,dt);
-% subplot(3,2,1); plot(x); hold on; plot(y); title('positions'); grid on;
-% subplot(3,2,2); plot(x,y); title('x-y'); grid on; axis equal;
-% subplot(3,2,[3 4]); plot(angles); title('angle'); grid on;
-% subplot(3,2,[5 6]); plot(angularRate); title('angular rate'); grid on;
+
+% drawToTestAngles(angles,dt,x,y)
 
     function angles = calculateAngleBasedOn3Points(vectorX,vectorY)
         for n = 1:length(vectorX)-2
@@ -159,7 +156,7 @@ angles = [0; 0; angles];
             point2 = [vectorX(n+1) vectorY(n+1)];
             point3 = [vectorX(n+2) vectorY(n+2)];
             vector1 = point2 - point1;
-            vector2 = point3 - point1;
+            vector2 = point3 - point2;
             if isLeft(point1,point2,point3)
                 angles(n,1) = angleBetweenVectors(vector1,vector2);
             else
@@ -167,11 +164,34 @@ angles = [0; 0; angles];
             end
         end
     end
+
+    function drawToTestAngles(angles,dt,x,y)
+        close all;
+        figure('units','normalized','outerposition',[0.1 0.1 0.8 0.8])
+        angularRate = gradient(angles,dt);
+        idx = findZeroCrossings(angularRate);
+        subplot(3,2,1); plot(x); hold on; plot(y); title('positions');
+        scatterNiceColors(idx,x(idx)); scatterNiceColors(idx,y(idx));
+        grid on;
+        
+        subplot(3,2,[3 4]); plot(angles); title('angle');
+        grid on; hold on;
+        scatterNiceColors(idx,angles(idx))
+        
+        subplot(3,2,[5 6]); plot(angularRate); title('angular rate');
+        grid on; hold on;
+        scatterNiceColors(idx,angularRate(idx))
+        
+        subplot(3,2,2); plot(x,y); title('x-y'); hold on;
+        scatterNiceColors(x(idx),y(idx))
+        grid on; axis equal;
+        pause
+    end
 end
 
 
 function [xrot,yrot,x,y] = rotateAndAddOffset(t,courtwidth,courtheigth)
-R = getRotationMatrixZ(35);
+R = getRotationMatrixZ(0);
 R = R(2:end,2:end);
 [x,y] = eightshape_variation(t,courtwidth,courtheigth);
 randomOffset = 25;

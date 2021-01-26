@@ -1,7 +1,6 @@
 function [x, P] = UKF_init(z,R)
 R1 = diag(R);
 % see UKF_get_measurement_sample()
-x = zeros(1,7); 
 x(1) = z(1); r(1) = R1(1);
 x(2) = z(2); r(2) = R1(2);
 x(3) = z(5); r(3) = R1(5);  % angle

@@ -1,4 +1,5 @@
 function Q = UKF_Q(dt,variance)
+%% Calculate system noise
 
 if not(exist('variance','var'))
     variance = 1;
@@ -12,20 +13,28 @@ end
 %     0          0       0       .5*dt^3,    dt^2,       dt ;
 %     0          0       0       .5*dt^2,       dt,        1]*variance;
 
-% Q = [0.02      0   0       0   0   0;% system noise
-%      0      0.05 0       0   0   0;
-%      0      0   0.5    0   0   0;
-%      0      0   0       0.02   0   0;
-%      0      0   0       0   0.05 0;
-%      0      0   0       0   0   0.5];
+% Q = [0.3*dt^4 1         dt       0      0   dt          dt; 
+%      0        0.3*dt^4  dt       0      0   dt          dt;
+%      0        0         0.5*dt^3 dt     1   0           0;
+%      0        0         0        dt     0   0           0;
+%      0        0         0        0      1   0           0;
+%      0        0         0        0      0   0.5*dt^2    0;
+%      0        0         0        0      0   0           1]*variance;
 
-Q = [0.3*dt^4 1         dt       0      0   dt          dt;
-     0        0.3*dt^4  dt       0      0   dt          dt;
-     0        0         0.5*dt^3 dt     1   0           0;
+Q = [0.3*dt^3 0         0       0      0   0          0;
+     0        0.3*dt^3  0       0      0   0          0;
+     0        0         0.5*dt   0     0   0           0;
      0        0         0        dt     0   0           0;
      0        0         0        0      1   0           0;
      0        0         0        0      0   0.5*dt^2    0;
      0        0         0        0      0   0           1]*variance;
+
+% Q = [0.3*dt^4 1         dt       0      0   dt          ;
+%      0        0.3*dt^4  dt       0      0   dt          ;
+%      0        0         0.5*dt^3 dt     1   0           ;
+%      0        0         0        dt     0   0           ;
+%      0        0         0        0      1   0           ;
+%      0        0         0        0      0   0.5*dt^2    ;]*variance;
 
 Q = Q+triu(Q,-1).'; % make it symmetric
 end

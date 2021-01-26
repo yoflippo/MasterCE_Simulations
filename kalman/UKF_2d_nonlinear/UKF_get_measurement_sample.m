@@ -28,7 +28,7 @@ R = vari.*eye(numel(vari));
 end
 
 function angle = initAngleBasedOnUWB(position)
-w = 2;
+w = 3;
 pos1.x = mean(position.x(1:w));
 pos1.y = mean(position.y(1:w));
 pos2.x = mean(position.x(w+1:w*2));

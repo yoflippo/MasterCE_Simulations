@@ -8,9 +8,9 @@ end
 nOutput = length(X_arr);
 
 idxPosX = 1;
-idxPosY = 4;
-idxVelX = 2;
-idxVelY = 5;
+idxPosY = 2;
+idxAngRate = 4;
+idxVelRes = 6;
 
 subplot(3,2,[1 2]);
 plot(position.x, position.y,'r', 'LineWidth', 2,'LineStyle','--','DisplayName','disturbed signal');hold on;
@@ -36,16 +36,16 @@ grid on; grid minor; legend
 title([add2title ' y'])
 
 subplot(3,2,5);
-plot(ts.t2, velocity.x,'r','LineWidth', 2,'DisplayName','disturbed vel x','LineStyle','--'); hold on;
-plot(ts.t2, clean.velocity.x,'g','LineWidth', 2,'DisplayName','clean velx'); hold on;
-plot(ts.t2(1:nOutput),  X_arr(:, idxVelX),'Color',[0 0 1], 'LineWidth', 2,'DisplayName','KF result velx');
+plot(ts.t2, velocity.angularRate,'r','LineWidth', 2,'DisplayName','disturbed vel x','LineStyle','--'); hold on;
+plot(ts.t2, clean.velocity.angularRate,'g','LineWidth', 2,'DisplayName','clean angular rate'); hold on;
+plot(ts.t2(1:nOutput),  X_arr(:, idxAngRate),'Color',[0 0 1], 'LineWidth', 2,'DisplayName','KF result velx');
 grid on; grid minor; legend
-title([add2title ' x velocity'])
+title([add2title ' angular rate'])
 
 subplot(3,2,6);
-plot(ts.t2, velocity.y,'r','LineWidth', 2,'DisplayName','disturbed vel y','LineStyle','--'); hold on;
-plot(ts.t2, clean.velocity.y,'g','LineWidth', 2,'DisplayName','clean vel y'); hold on;
-plot(ts.t2(1:nOutput),  X_arr(1:nOutput, idxVelY),'Color',[0 0 1], 'LineWidth', 2,'DisplayName','KF result vel y');
+plot(ts.t2, velocity.res,'r','LineWidth', 2,'DisplayName','disturbed vel res','LineStyle','--'); hold on;
+plot(ts.t2, clean.velocity.res,'g','LineWidth', 2,'DisplayName','clean vel res'); hold on;
+plot(ts.t2(1:nOutput),  X_arr(1:nOutput, idxVelRes),'Color',[0 0 1], 'LineWidth', 2,'DisplayName','KF result vel y');
 grid on; grid minor; legend
-title([add2title ' y velocity'])
+title([add2title ' resultant velocity'])
 end
