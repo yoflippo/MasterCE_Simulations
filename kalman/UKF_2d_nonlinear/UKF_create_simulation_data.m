@@ -12,6 +12,7 @@ else
     load(matfilename);
     [position2,velocity2,acceleration2,clean2,temporalspecs2] = generateAll();
     if (not(isequal(clean.position,clean2.position)) || ...
+            not(isequal(clean.velocity,clean2.velocity)) || ...
             not(isequal(position.var,position2.var)) || ...
             not(isequal(temporalspecs2.fs,temporalspecs.fs)) || ...
             not(isequal(position2.rotatedoffset,position.rotatedoffset)) || ...
@@ -19,6 +20,7 @@ else
             not(isequal(temporalspecs2.fs2,temporalspecs.fs2)) || ...
             not(isequal(temporalspecs2.n,temporalspecs.n)) || ...
             not(isequal(temporalspecs2.n2,temporalspecs.n2)) || ...
+               not(isequal(velocity.varAngles,velocity2.varAngles)) || ...
             not(isequal(velocity.var,velocity2.var)))
         clear position2 clean2 velocity2 acceleration2 temporalspecs2
         [position,velocity,acceleration,clean,temporalspecs] = generateAll();
@@ -61,7 +63,7 @@ end
 end
 
 function [position,velocity,acceleration,clean,tspecs] = generateAll()
-te = 10; %sec
+te = 15; %sec
 courtwidth = 10;
 courtheigth = 20;
 
@@ -79,7 +81,7 @@ clean.position.y = y;
 [dt,t,n] = createTemporalSpecs(fs,te);
 [dt2,t2,n2] = createTemporalSpecs(fs2,te);
 
-position.var = 1.5 * ones(size(t));
+position.var = 1 * ones(size(t));
 position.x = generate_signal(x, position.var);
 position.y = generate_signal(y, position.var);
 
@@ -90,16 +92,17 @@ position.rotatedoffset.y = y2rot;
 clean.velocity.x = gradient(x2rot,dt2);
 clean.velocity.y = gradient(y2rot,dt2);
 clean.velocity.res =  sqrt(clean.velocity.x.^2 + clean.velocity.y.^2);
+% clean.velocity.res = clean.velocity.res + simulate_slipping(t2);
 
-velocity.var = 0.15 * ones(size(t2));
+velocity.var = 0.1 * ones(size(t2));
 velocity.x = generate_signal(clean.velocity.x, velocity.var); %rotated
 velocity.y = generate_signal(clean.velocity.y, velocity.var); %rotated
-velocity.res = sqrt(velocity.x.^2 + velocity.y.^2);
+velocity.res = generate_signal(clean.velocity.res, velocity.var);
 
 clean.velocity.angularRate = calculateAnglesBetweenXYpoints(x2rot,y2rot,dt2);
 clean.velocity.angles = cumtrapz(clean.velocity.angularRate);
 
-velocity.varAngles = 0.05 * ones(size(t2));
+velocity.varAngles = 0.005 * ones(size(t2));
 velocity.angularRate = generate_signal(clean.velocity.angularRate,velocity.varAngles);
 velocity.angles = cumtrapz(velocity.angularRate);
 
