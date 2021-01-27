@@ -16,24 +16,22 @@ plot(clean.velocity.angularRate,'DisplayName','clean angular velocity');
 grid on; grid minor; title('Angular velocity');
 
 subplot(3,3,nsp); nsp = nsp + 1;
-plot(clean.velocity.x,'DisplayName','velocity x','Color','g');
+plot(gradient(position.x2,temporalspecs.dt2),'DisplayName','velocity x','Color','g');
 grid on; grid minor; title('Desired velocity x');
 
 subplot(3,3,nsp); nsp = nsp + 1;
-plot(clean.velocity.y,'DisplayName','velocity y','Color','r');
+plot(gradient(position.y2,temporalspecs.dt2),'DisplayName','velocity y','Color','r');
 grid on; grid minor; title('Desired velocity y');
 
 subplot(3,3,nsp); nsp = nsp + 1;
-angularRate = clean.velocity.angularRate;
-plot(angularRate,'DisplayName','angular Rate','Color','m');
-plot(clean.velocity.angularRate,'DisplayName','Clean angles between points','Color','g');
-grid on; grid minor; title('angular Rate');
-
-subplot(3,3,nsp); nsp = nsp + 1;
-startAngle = atan2d((position.x2(2)-position.x2(1)),(position.y2(2)-position.y2(1)));
-Angles = clean.velocity.angles + startAngle;
+startAngle = atan2d((position.y2(2)-position.y2(1)),(position.x2(2)-position.x2(1)));
+Angles = cumtrapz(clean.velocity.angularRate) + startAngle;
 plot(Angles,'DisplayName','Angle','Color','m');
 grid on; grid minor; title('Angles');
+
+subplot(3,3,nsp); nsp = nsp + 1;
+plot(clean.velocity.angles,'DisplayName','clean angular velocity');
+grid on; grid minor; title('angles clean');
 
 subplot(3,3,nsp); nsp = nsp + 1;
 V = clean.velocity.res;

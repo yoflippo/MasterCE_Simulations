@@ -64,7 +64,7 @@ end
 
 function [position,velocity,acceleration,clean,tspecs] = generateAll()
 te = 15; %sec
-courtwidth = 10;
+courtwidth = 5;
 courtheigth = 20;
 
 fs = 8;  % position
@@ -89,6 +89,9 @@ position.y = generate_signal(y, position.var);
 
 position.rotatedoffset.x = x2rot;
 position.rotatedoffset.y = y2rot;
+position.x2 = x2;
+position.y2 = y2;
+
 clean.velocity.x = gradient(x2rot,dt2);
 clean.velocity.y = gradient(y2rot,dt2);
 clean.velocity.res =  sqrt(clean.velocity.x.^2 + clean.velocity.y.^2);
@@ -119,8 +122,6 @@ tspecs.dt = dt;
 tspecs.dt2 = dt2;
 tspecs.n = n;
 tspecs.n2 = n2;
-position.x2 = x2;
-position.y2 = y2;
 end
 
 
@@ -197,10 +198,10 @@ end
 
 
 function [xrot,yrot,x,y] = rotateAndAddOffset(t,courtwidth,courtheigth)
-R = getRotationMatrixZ(90);
+R = getRotationMatrixZ(130);
 R = R(2:end,2:end);
 [x,y] = eightshape_variation(t,courtwidth,courtheigth);
-randomOffset = 100;
+randomOffset = 10;
 CDR = ([x y]+randomOffset)*R;
 xrot = CDR(:,1);
 yrot = CDR(:,2);
