@@ -8,7 +8,7 @@ for i = 1:ts.n2
     if i == 1
         [z, R] = UKF_get_measurement_sample(position,velocity,1,i,1,true);
         [x, P] = UKF_init(z,R);
-        weights = UKF_weights(length(x),1,2,4);
+        weights = UKF_weights(length(x),0.1,2,1);
     end
     
     sigmaPoints = MerweScaledSigmaPoints(x,P,weights);
@@ -30,10 +30,13 @@ for i = 1:ts.n2
 end
 
 close all; name = replace(mfilename,'_','\_');
-UKF_plot_results(ts,clean,position,UKF_x,velocity,[name]);
+blVisiblePlots = 0;
+RMSE1 = UKF_plot_results(ts,clean,position,UKF_x,velocity,[name],blVisiblePlots);
 
 UKF_x = UKF_RTS_smooth(UKF_x, UKF_P, UKF_Q(ts.dt2),ts.dt2,weights);
-UKF_plot_results(ts,clean,position,UKF_x,velocity,[name ' RTS']);
+
+RMSE2 = UKF_plot_results(ts,clean,position,UKF_x,velocity,[name ' RTS'],blVisiblePlots);
 distFig
+[RMSE1 RMSE2]
 end
 

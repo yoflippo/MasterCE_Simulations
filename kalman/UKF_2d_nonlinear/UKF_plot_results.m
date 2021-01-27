@@ -1,5 +1,15 @@
-function UKF_plot_results(ts,clean,position,UKFout,velocity,add2title)
-figure;
+function [RMSE] = UKF_plot_results(ts,clean,position,UKFout,velocity,add2title,blVisible)
+
+if not(exist('blVisible','var'))
+    blVisible = true;
+end
+
+if blVisible
+    figure('Visible','on');
+else
+    figure('Visible','off');
+end
+
 if not(exist('add2title','var'))
     add2title = '';
 else
@@ -18,8 +28,8 @@ plot(position.x, position.y,'r', 'LineWidth', 2,'LineStyle','--','DisplayName','
 plot(clean.position.x, clean.position.y,'g', 'LineWidth', 2,'DisplayName','clean signal');
 plot(UKFout(:, idxPosX), UKFout(:, idxPosY),'Color',[0 0 1],'LineWidth', 2,'DisplayName','KF result');
 grid on; grid minor; legend
-percentageImprovement = rmse(UKFout(:,idxPosX)-position.x2(1:nOutput));
-title([add2title  ' xy, RMSE '  num2str(round(percentageImprovement,3))])
+RMSE = rmse(UKFout(:,idxPosX)-position.x2(1:nOutput));
+title([add2title  ' xy, RMSE '  num2str(round(RMSE,3))])
 axis equal;
 
 subplot(3,3,3);

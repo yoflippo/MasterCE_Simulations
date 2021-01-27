@@ -59,11 +59,11 @@ end
 end
 
 function [position,velocity,acceleration,clean,tspecs] = generateAll()
-te = 20; %sec
+te = 10; %sec
 courtwidth = 10;
 courtheigth = 20;
 
-fs = 20;  % position
+fs = 10;  % position
 fs2 = 100; % velocity
 
 [~,t,~] = createTemporalSpecs(fs,te);
@@ -192,7 +192,7 @@ end
 
 
 function [xrot,yrot,x,y] = rotateAndAddOffset(t,courtwidth,courtheigth)
-R = getRotationMatrixZ(30);
+R = getRotationMatrixZ(40);
 R = R(2:end,2:end);
 [x,y] = eightshape_variation(t,courtwidth,courtheigth);
 randomOffset = 25;

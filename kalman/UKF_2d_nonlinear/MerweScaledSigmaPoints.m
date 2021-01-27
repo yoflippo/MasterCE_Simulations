@@ -1,8 +1,8 @@
 function sigmaPoints = MerweScaledSigmaPoints(meanFilter,covFilter,weights)
 
 n = numel(meanFilter);
-Psig = eye(n)*covFilter;
-U = chol((n+weights.lambda)*Psig);
+P = eye(n)*covFilter;
+U = chol((n+weights.lambda) * P);
 
 [r,c] = size(meanFilter);
 if r>c
