@@ -8,7 +8,7 @@ for i = 1:ts.n2
     if i == 1
         [z, R] = UKF_get_measurement_sample(position,velocity,1,i,1,true);
         [x, P] = UKF_init(z,R);
-        weights = UKF_weights(length(x),1,2,1);
+        weights = UKF_weights(length(x),1,2,4);
     end
     
     sigmaPoints = MerweScaledSigmaPoints(x,P,weights);

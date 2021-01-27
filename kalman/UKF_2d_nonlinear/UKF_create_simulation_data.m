@@ -59,11 +59,11 @@ end
 end
 
 function [position,velocity,acceleration,clean,tspecs] = generateAll()
-te = 10; %sec
+te = 20; %sec
 courtwidth = 10;
 courtheigth = 20;
 
-fs = 100;  % position
+fs = 20;  % position
 fs2 = 100; % velocity
 
 [~,t,~] = createTemporalSpecs(fs,te);
@@ -89,17 +89,17 @@ clean.velocity.x = gradient(x2rot,dt2);
 clean.velocity.y = gradient(y2rot,dt2);
 clean.velocity.res =  sqrt(clean.velocity.x.^2 + clean.velocity.y.^2);
 
-velocity.var = 0.5 * ones(size(t2));
+velocity.var = 0.1 * ones(size(t2));
 velocity.x = generate_signal(clean.velocity.x, velocity.var); %rotated
 velocity.y = generate_signal(clean.velocity.y, velocity.var); %rotated
 velocity.res = sqrt(velocity.x.^2 + velocity.y.^2);
 
-clean.velocity.angles = calculateAnglesBetweenXYpoints(x2rot,y2rot,dt2);
-clean.velocity.angularRate = gradient(clean.velocity.angles,dt2);
+clean.velocity.angularRate = calculateAnglesBetweenXYpoints(x2rot,y2rot,dt2);
+clean.velocity.angles = cumtrapz(clean.velocity.angularRate);
 
-velocity.varAngles = 0.1*ones(size(t2));
-velocity.angles = clean.velocity.angles;
-velocity.angularRate = generate_signal(gradient(velocity.angles,dt2),velocity.varAngles);
+velocity.varAngles = 0.05 * ones(size(t2));
+velocity.angularRate = generate_signal(clean.velocity.angularRate,velocity.varAngles);
+velocity.angles = cumtrapz(velocity.angularRate);
 
 acceleration.var = ones(length(t),1)*2;
 acceleration.x = gradient(velocity.x,dt2);
@@ -144,9 +144,9 @@ t(2:end-1) = t(2:end-1) + abs(randn(size(t(2:end-1)))*dt/10);
 end
 
 
-function angles = calculateAnglesBetweenXYpoints(x,y,dt)
-angles = calculateAngleBasedOn3Points(x,y);
-angles = [0; 0; angles];
+function angularRate = calculateAnglesBetweenXYpoints(x,y,dt)
+angularRate = calculateAngleBasedOn3Points(x,y);
+angularRate = [0; 0; angularRate];
 
 % drawToTestAngles(angles,dt,x,y)
 
@@ -165,18 +165,19 @@ angles = [0; 0; angles];
         end
     end
 
-    function drawToTestAngles(angles,dt,x,y)
+    function drawToTestAngles(angularRate,dt,x,y)
         close all;
         figure('units','normalized','outerposition',[0.1 0.1 0.8 0.8])
-        angularRate = gradient(angles,dt);
+        %         angularRate = gradient(angles,dt);
+        Angles = cumtrapz(angularRate);
         idx = findZeroCrossings(angularRate);
         subplot(3,2,1); plot(x); hold on; plot(y); title('positions');
         scatterNiceColors(idx,x(idx)); scatterNiceColors(idx,y(idx));
         grid on;
         
-        subplot(3,2,[3 4]); plot(angles); title('angle');
+        subplot(3,2,[3 4]); plot(Angles); title('angle');
         grid on; hold on;
-        scatterNiceColors(idx,angles(idx))
+        scatterNiceColors(idx,Angles(idx))
         
         subplot(3,2,[5 6]); plot(angularRate); title('angular rate');
         grid on; hold on;
@@ -191,7 +192,7 @@ end
 
 
 function [xrot,yrot,x,y] = rotateAndAddOffset(t,courtwidth,courtheigth)
-R = getRotationMatrixZ(66);
+R = getRotationMatrixZ(30);
 R = R(2:end,2:end);
 [x,y] = eightshape_variation(t,courtwidth,courtheigth);
 randomOffset = 25;

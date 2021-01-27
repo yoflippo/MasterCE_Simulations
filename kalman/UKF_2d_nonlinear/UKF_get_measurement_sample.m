@@ -16,8 +16,8 @@ if boolInit
         10]';
 else
     if not(boolPosition)
-        z = [velocity(n).res(i) velocity(n).angularRate(i)]';
-        vari = [velocity(n).var(i) velocity(n).varAngles(i)]';
+        z = [ velocity(n).angularRate(i) velocity(n).res(i)]';
+        vari = [velocity(n).varAngles(i) velocity(n).var(i) ]';
     else
         z = [position(n).x(i) position(n).y(i) ]';
         vari = [position(n).var(i) position(n).var(i) ]';

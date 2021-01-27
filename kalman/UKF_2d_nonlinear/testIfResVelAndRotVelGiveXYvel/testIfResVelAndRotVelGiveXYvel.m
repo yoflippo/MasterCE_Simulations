@@ -1,6 +1,7 @@
 function testIfResVelAndRotVelGiveXYvel()
 close all; clear variables; clc;
 [a] = UKF_create_simulation_data(true);
+
 [ap.thisFile, nm.CurrFile] = fileparts(mfilename('fullpath'));
 cd(ap.thisFile);
 load(fullfile(fileparts(ap.thisFile),'UKF_create_simulation_data.mat'))
@@ -23,15 +24,14 @@ plot(clean.velocity.y,'DisplayName','velocity y','Color','r');
 grid on; grid minor; title('Desired velocity y');
 
 subplot(3,3,nsp); nsp = nsp + 1;
-startAngle = atan2d((position.x2(2)-position.x2(1)),(position.y2(2)-position.y2(1)));
-Angles = cumtrapz(clean.velocity.angularRate)/temporalspecs.fs2;
-plot(Angles,'DisplayName','Angles between points','Color','m');
-plot(clean.velocity.angles,'DisplayName','Clean angles between points','Color','g');
-grid on; grid minor; title('Angles between points');
+angularRate = clean.velocity.angularRate;
+plot(angularRate,'DisplayName','angular Rate','Color','m');
+plot(clean.velocity.angularRate,'DisplayName','Clean angles between points','Color','g');
+grid on; grid minor; title('angular Rate');
 
 subplot(3,3,nsp); nsp = nsp + 1;
 startAngle = atan2d((position.x2(2)-position.x2(1)),(position.y2(2)-position.y2(1)));
-Angles = cumtrapz(Angles) + startAngle;
+Angles = clean.velocity.angles + startAngle;
 plot(Angles,'DisplayName','Angle','Color','m');
 grid on; grid minor; title('Angles');
 
