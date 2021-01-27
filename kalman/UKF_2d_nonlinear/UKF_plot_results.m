@@ -28,7 +28,7 @@ plot(position.x, position.y,'r', 'LineWidth', 2,'LineStyle','--','DisplayName','
 plot(clean.position.x, clean.position.y,'g', 'LineWidth', 2,'DisplayName','clean signal');
 plot(UKFout(:, idxPosX), UKFout(:, idxPosY),'Color',[0 0 1],'LineWidth', 2,'DisplayName','KF result');
 grid on; grid minor; legend
-RMSE = rmse(UKFout(:,idxPosX)-position.x2(1:nOutput));
+RMSE = rmse(distances([position.x2(1:nOutput) position.y2(1:nOutput)] , [UKFout(:,[idxPosX idxPosY])]) );
 title([add2title  ' xy, RMSE '  num2str(round(RMSE,3))])
 axis equal;
 
@@ -66,4 +66,8 @@ plot(ts.t2, clean.velocity.angles,'g','LineWidth', 2,'DisplayName','clean angles
 plot(ts.t2(1:nOutput),  UKFout(1:nOutput, idxAngles),'Color',[0 0 1], 'LineWidth', 2,'DisplayName','KF result angles');
 grid on; grid minor; legend
 title([add2title ' Angles'])
+end
+
+function d = distances(posa,posb)
+d =sqrt((posb(:,1)-posa(:,1)).^2 + (posb(:,2)-posa(:,2)).^2);
 end

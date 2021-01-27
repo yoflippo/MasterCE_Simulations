@@ -14,6 +14,7 @@ else
     if (not(isequal(clean.position,clean2.position)) || ...
             not(isequal(position.var,position2.var)) || ...
             not(isequal(temporalspecs2.fs,temporalspecs.fs)) || ...
+            not(isequal(position2.rotatedoffset,position.rotatedoffset)) || ...
             not(isequal(temporalspecs2.fs2,temporalspecs.fs2)) || ...
             not(isequal(temporalspecs2.n,temporalspecs.n)) || ...
             not(isequal(temporalspecs2.n2,temporalspecs.n2)) || ...
@@ -63,7 +64,7 @@ te = 10; %sec
 courtwidth = 10;
 courtheigth = 20;
 
-fs = 10;  % position
+fs = 8;  % position
 fs2 = 100; % velocity
 
 [~,t,~] = createTemporalSpecs(fs,te);
@@ -97,7 +98,7 @@ velocity.res = sqrt(velocity.x.^2 + velocity.y.^2);
 clean.velocity.angularRate = calculateAnglesBetweenXYpoints(x2rot,y2rot,dt2);
 clean.velocity.angles = cumtrapz(clean.velocity.angularRate);
 
-velocity.varAngles = 0.05 * ones(size(t2));
+velocity.varAngles = 0.01 * ones(size(t2));
 velocity.angularRate = generate_signal(clean.velocity.angularRate,velocity.varAngles);
 velocity.angles = cumtrapz(velocity.angularRate);
 
@@ -192,10 +193,10 @@ end
 
 
 function [xrot,yrot,x,y] = rotateAndAddOffset(t,courtwidth,courtheigth)
-R = getRotationMatrixZ(40);
+R = getRotationMatrixZ(90);
 R = R(2:end,2:end);
 [x,y] = eightshape_variation(t,courtwidth,courtheigth);
-randomOffset = 25;
+randomOffset = 15;
 CDR = ([x y]+randomOffset)*R;
 xrot = CDR(:,1);
 yrot = CDR(:,2);

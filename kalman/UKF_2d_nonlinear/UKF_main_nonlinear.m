@@ -30,7 +30,7 @@ for i = 1:ts.n2
 end
 
 close all; name = replace(mfilename,'_','\_');
-blVisiblePlots = 0;
+blVisiblePlots = 1;
 RMSE1 = UKF_plot_results(ts,clean,position,UKF_x,velocity,[name],blVisiblePlots);
 
 UKF_x = UKF_RTS_smooth(UKF_x, UKF_P, UKF_Q(ts.dt2),ts.dt2,weights);
