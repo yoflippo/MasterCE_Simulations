@@ -15,6 +15,7 @@ else
             not(isequal(position.var,position2.var)) || ...
             not(isequal(temporalspecs2.fs,temporalspecs.fs)) || ...
             not(isequal(position2.rotatedoffset,position.rotatedoffset)) || ...
+            not(isequal(acceleration2.var,acceleration.var)) || ...
             not(isequal(temporalspecs2.fs2,temporalspecs.fs2)) || ...
             not(isequal(temporalspecs2.n,temporalspecs.n)) || ...
             not(isequal(temporalspecs2.n2,temporalspecs.n2)) || ...
@@ -78,7 +79,7 @@ clean.position.y = y;
 [dt,t,n] = createTemporalSpecs(fs,te);
 [dt2,t2,n2] = createTemporalSpecs(fs2,te);
 
-position.var = 1*ones(size(t));
+position.var = 1.5 * ones(size(t));
 position.x = generate_signal(x, position.var);
 position.y = generate_signal(y, position.var);
 
@@ -90,7 +91,7 @@ clean.velocity.x = gradient(x2rot,dt2);
 clean.velocity.y = gradient(y2rot,dt2);
 clean.velocity.res =  sqrt(clean.velocity.x.^2 + clean.velocity.y.^2);
 
-velocity.var = 0.1 * ones(size(t2));
+velocity.var = 0.15 * ones(size(t2));
 velocity.x = generate_signal(clean.velocity.x, velocity.var); %rotated
 velocity.y = generate_signal(clean.velocity.y, velocity.var); %rotated
 velocity.res = sqrt(velocity.x.^2 + velocity.y.^2);
@@ -98,11 +99,11 @@ velocity.res = sqrt(velocity.x.^2 + velocity.y.^2);
 clean.velocity.angularRate = calculateAnglesBetweenXYpoints(x2rot,y2rot,dt2);
 clean.velocity.angles = cumtrapz(clean.velocity.angularRate);
 
-velocity.varAngles = 0.01 * ones(size(t2));
+velocity.varAngles = 0.05 * ones(size(t2));
 velocity.angularRate = generate_signal(clean.velocity.angularRate,velocity.varAngles);
 velocity.angles = cumtrapz(velocity.angularRate);
 
-acceleration.var = ones(length(t),1)*2;
+acceleration.var = ones(length(t2),1)*2;
 acceleration.x = gradient(velocity.x,dt2);
 acceleration.y = gradient(velocity.y,dt2);
 acceleration.res = gradient(velocity.res,dt2);
@@ -196,7 +197,7 @@ function [xrot,yrot,x,y] = rotateAndAddOffset(t,courtwidth,courtheigth)
 R = getRotationMatrixZ(90);
 R = R(2:end,2:end);
 [x,y] = eightshape_variation(t,courtwidth,courtheigth);
-randomOffset = 15;
+randomOffset = 100;
 CDR = ([x y]+randomOffset)*R;
 xrot = CDR(:,1);
 yrot = CDR(:,2);

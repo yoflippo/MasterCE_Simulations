@@ -1,4 +1,4 @@
-function [z,R] = UKF_get_measurement_sample(position,velocity,n,i,boolPosition,boolInit)
+function [z,R] = UKF_get_measurement_sample(position,velocity,acceleration,n,i,boolPosition,boolInit)
 if not(exist('boolPosition','var'))
     boolPosition = false;
 end
@@ -19,8 +19,10 @@ else
         z = [ velocity(n).angularRate(i) velocity(n).res(i)]';
         vari = [velocity(n).varAngles(i) velocity(n).var(i) ]';
     else
-        z = [position(n).x(i) position(n).y(i) ]';
+        z = [position(n).x(i) position(n).y(i)  ]';
         vari = [position(n).var(i) position(n).var(i) ]';
+%              z = [position(n).x(i) position(n).y(i) acceleration(n).res(i)  ]';
+%         vari = [position(n).var(i) position(n).var(i) acceleration(n).var(i)]';
     end
 end
 

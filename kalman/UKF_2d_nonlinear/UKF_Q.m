@@ -2,7 +2,7 @@ function Q = UKF_Q(dt,variance)
 %% Calculate system noise
 
 if not(exist('variance','var'))
-    variance = 1;
+    variance = 0.1;
 end
 
 
@@ -21,13 +21,13 @@ end
 %      0        0         0        0      0   0.5*dt^2    0;
 %      0        0         0        0      0   0           1]*variance;
 
-Q = [dt       0         0.005    0      0   -0.01        0.01;
-     0        dt        0.05     0      0   -0.01        0.01;
-     0        0         0.1      0      0   0           0;
+Q = [dt       0         0   0      0   0        0.;
+     0        dt        0    0      0   0        0;
+     0        0         dt^2      0      0   0           0;
      0        0         0        dt^2   0   0           0;
-     0        0         0        0      3   0           0;
-     0        0         0        0      0   dt^2        0.01;
-     0        0         0        0      0   0           3]*variance;
+     0        0         0        0      1.5   0           0;
+     0        0         0        0      0   dt^2        0;
+     0        0         0        0      0   0           0.5]*variance;
 
 % Q = [0.3*dt^4 1         dt       0      0   dt          ;
 %      0        0.3*dt^4  dt       0      0   dt          ;
