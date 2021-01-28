@@ -6,26 +6,23 @@ if not(exist('boolInit','var'))
     boolInit = false;
 end
 
+varianceAngularRate = 0.01;
+
 if boolInit
     z = [position(n).x(i) position(n).y(i) ...
         velocity(n).res(i) velocity(n).angularRate(i) ...
         initAngleBasedOnUWB(position)]';
-    %         z = [position(n).x(i) position(n).y(i) ...
-    %         velocity(n).res(i) velocity(n).angularRate(i) ...
-    %         0]';
     
     vari = [ position(n).var(i) position(n).var(i) ...
-        velocity(n).var(i) velocity(n).varAngles(i) ...
+        velocity(n).var(i) varianceAngularRate ...
         10]';
 else
     if not(boolPosition)
         z = [ velocity(n).angularRate(i) velocity(n).res(i)]';
-        vari = [velocity(n).varAngles(i) velocity(n).var(i) ]';
+        vari = [varianceAngularRate velocity(n).var(i) ]';
     else
         z = [position(n).x(i) position(n).y(i)  ]';
         vari = [position(n).var(i) position(n).var(i) ]';
-        %              z = [position(n).x(i) position(n).y(i) acceleration(n).res(i)  ]';
-        %         vari = [position(n).var(i) position(n).var(i) acceleration(n).var(i)]';
     end
 end
 
@@ -33,7 +30,7 @@ R = vari.*eye(numel(vari));
 end
 
 function angle = initAngleBasedOnUWB(position)
-w = 3;
+w = 2;
 pos1.x = mean(position.x(1:w));
 pos1.y = mean(position.y(1:w));
 pos2.x = mean(position.x(w+1:(2*w)+1));

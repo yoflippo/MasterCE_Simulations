@@ -2,9 +2,9 @@ function UKF_plot_residuals(position,residualsV,UKF_x)
 
 figure('units','normalized','outerposition',[0.1 0.1 0.8 0.8])
 subplot(3,1,1); title('Residuals');
-plot(residualsV(:,1),'k--','DisplayName','rot. vel.'); 
+plot(residualsV(:,1),'k--','DisplayName','residuals rotational velocity'); 
 hold on;
-plot(residualsV(:,2),'k.','DisplayName','res. vel.'); 
+plot(residualsV(:,2),'b:','DisplayName','residuals resultant. velocity'); 
 grid on; grid minor; legend;
 
 subplot(3,1,2); title('Clean versus noisy position y ');

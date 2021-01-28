@@ -67,7 +67,7 @@ te = 15; %sec
 courtwidth = 10;
 courtheigth = 20;
 
-fs = 8;  % position
+fs = 10;  % position
 fs2 = 100; % velocity
 
 [~,t,~] = createTemporalSpecs(fs,te);
@@ -95,7 +95,7 @@ position.y2 = y2;
 clean.velocity.x = gradient(x2rot,dt2);
 clean.velocity.y = gradient(y2rot,dt2);
 clean.velocity.res =  sqrt(clean.velocity.x.^2 + clean.velocity.y.^2);
-clean.velocity.res = clean.velocity.res + simulate_slipping(t2);
+% clean.velocity.res = clean.velocity.res + simulate_slipping(t2);
 
 velocity.var = 0.1 * ones(size(t2));
 velocity.x = generate_signal(clean.velocity.x, velocity.var); %rotated
@@ -103,11 +103,11 @@ velocity.y = generate_signal(clean.velocity.y, velocity.var); %rotated
 velocity.res = generate_signal(clean.velocity.res, velocity.var);
 
 clean.velocity.angularRate = calculateAnglesBetweenXYpoints(x2rot,y2rot,dt2);
-clean.velocity.angles = cumtrapz(clean.velocity.angularRate);
+clean.velocity.angles = cumtrapz(t2,clean.velocity.angularRate);
 
-velocity.varAngles = 0.005 * ones(size(t2));
+velocity.varAngles = 20 * ones(size(t2));
 velocity.angularRate = generate_signal(clean.velocity.angularRate,velocity.varAngles);
-velocity.angles = cumtrapz(velocity.angularRate);
+velocity.angles = cumtrapz(t2,velocity.angularRate);
 
 acceleration.var = ones(length(t2),1)*2;
 acceleration.x = gradient(velocity.x,dt2);
@@ -151,7 +151,7 @@ end
 
 
 function angularRate = calculateAnglesBetweenXYpoints(x,y,dt)
-angularRate = calculateAngleBasedOn3Points(x,y);
+angularRate = calculateAngleBasedOn3Points(x,y)/dt;
 angularRate = [0; 0; angularRate];
 
 % drawToTestAngles(angles,dt,x,y)

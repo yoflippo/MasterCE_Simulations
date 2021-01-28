@@ -8,6 +8,6 @@ x(4) = z(4); r(4) = R1(4);  % angular rate
 x(5) = 0;    r(5) = 10;     % angular acceleration
 x(6) = z(3); r(6) = R1(3);  % res. velocity
 x(7) = 0;    r(7) = 10;     % acceleration
-% P = eye(numel(x)).*r;
-P = eye(numel(x)).*2;
+P = eye(numel(x)).*r;
+% P = eye(numel(x)).*2;
 end
