@@ -64,7 +64,7 @@ end
 
 function [position,velocity,acceleration,clean,tspecs] = generateAll()
 te = 15; %sec
-courtwidth = 5;
+courtwidth = 10;
 courtheigth = 20;
 
 fs = 8;  % position
@@ -81,7 +81,7 @@ clean.position.y = y;
 [dt,t,n] = createTemporalSpecs(fs,te);
 [dt2,t2,n2] = createTemporalSpecs(fs2,te);
 
-position.var = 1 * ones(size(t));
+position.var = 2 * ones(size(t));
 position.x = generate_signal(x, position.var);
 position.y = generate_signal(y, position.var);
 
