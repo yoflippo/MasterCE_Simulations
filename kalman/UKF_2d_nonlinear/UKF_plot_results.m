@@ -24,7 +24,11 @@ idxVelRes = 6;
 idxAngles = 3;
 
 subplot(3,3,[1 2 4 5]);
-plot(position.x, position.y,'r', 'LineWidth', 2,'LineStyle','--','DisplayName','disturbed signal');hold on;
+plot(position.x, position.y,'r', 'LineWidth', 2,'LineStyle','--','DisplayName','disturbed signal'); hold on;
+try
+    plot(position.xSavitskyGolay, position.ySavitskyGolay,'r', 'LineWidth', 2,'LineStyle',':','DisplayName','SavitskyGolay disturbed signal');
+catch
+end
 plot(clean.position.x, clean.position.y,'g', 'LineWidth', 2,'DisplayName','clean signal');
 plot(UKFout(:, idxPosX), UKFout(:, idxPosY),'Color',[0 0 1],'LineWidth', 2,'DisplayName','KF result');
 grid on; grid minor; legend
