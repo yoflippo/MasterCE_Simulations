@@ -10,6 +10,9 @@ if boolInit
     z = [position(n).x(i) position(n).y(i) ...
         velocity(n).res(i) velocity(n).angularRate(i) ...
         initAngleBasedOnUWB(position)]';
+    %         z = [position(n).x(i) position(n).y(i) ...
+    %         velocity(n).res(i) velocity(n).angularRate(i) ...
+    %         0]';
     
     vari = [ position(n).var(i) position(n).var(i) ...
         velocity(n).var(i) velocity(n).varAngles(i) ...
@@ -21,8 +24,8 @@ else
     else
         z = [position(n).x(i) position(n).y(i)  ]';
         vari = [position(n).var(i) position(n).var(i) ]';
-%              z = [position(n).x(i) position(n).y(i) acceleration(n).res(i)  ]';
-%         vari = [position(n).var(i) position(n).var(i) acceleration(n).var(i)]';
+        %              z = [position(n).x(i) position(n).y(i) acceleration(n).res(i)  ]';
+        %         vari = [position(n).var(i) position(n).var(i) acceleration(n).var(i)]';
     end
 end
 

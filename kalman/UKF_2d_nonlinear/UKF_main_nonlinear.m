@@ -30,7 +30,7 @@ for i = 1:ts.n2
 end
 
 close all; name = replace(mfilename,'_','\_');
-blVisiblePlots = 0;
+blVisiblePlots =1;
 RMSE1 = UKF_plot_results(ts,clean,position,UKF_x,velocity,[name],blVisiblePlots);
 
 UKF_RTS_x = UKF_RTS_smooth(UKF_x, UKF_P, UKF_Q(ts.dt2),ts.dt2,weights);
@@ -38,6 +38,6 @@ UKF_RTS_x = UKF_RTS_smooth(UKF_x, UKF_P, UKF_Q(ts.dt2),ts.dt2,weights);
 RMSE2 = UKF_plot_results(ts,clean,position,UKF_RTS_x,velocity,[name ' RTS'],blVisiblePlots);
 distFig
 [RMSE1 RMSE2]
-UKF_plot_residuals(clean,position,residualsV,UKF_x)
+% UKF_plot_residuals(position,residualsV,UKF_RTS_x)
 end
 

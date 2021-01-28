@@ -95,7 +95,7 @@ position.y2 = y2;
 clean.velocity.x = gradient(x2rot,dt2);
 clean.velocity.y = gradient(y2rot,dt2);
 clean.velocity.res =  sqrt(clean.velocity.x.^2 + clean.velocity.y.^2);
-% clean.velocity.res = clean.velocity.res + simulate_slipping(t2);
+clean.velocity.res = clean.velocity.res + simulate_slipping(t2);
 
 velocity.var = 0.1 * ones(size(t2));
 velocity.x = generate_signal(clean.velocity.x, velocity.var); %rotated
