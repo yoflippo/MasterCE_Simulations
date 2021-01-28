@@ -87,18 +87,18 @@ fs2 = 100; % velocity
 clean.position.x = x;
 clean.position.y = y;
 
-% [dt,t,n] = addJitter(fs,te);
-% [dt2,t2,n2] = addJitter(fs2,te);
 [dt,t,n] = createTemporalSpecs(fs,te);
 [dt2,t2,n2] = createTemporalSpecs(fs2,te);
+% [dt,t,n] = addJitter(fs,te);
+% [dt2,t2,n2] = addJitter(fs2,te);
 
 position.var.pos = 2;
 position.x = generate_signal(x, position.var.pos);
 position.y = generate_signal(y, position.var.pos);
 
-sgolayN = 3;
-position.savitskygolay.x = smooth(position.x,'sgolay',sgolayN);
-position.savitskygolay.y = smooth(position.y,'sgolay',sgolayN);
+sgolayN = 1;
+position.savitskygolay.x = smooth(position.x,5,'sgolay',sgolayN);
+position.savitskygolay.y = smooth(position.y,5,'sgolay',sgolayN);
 
 fs3 = fs*4;
 position.var.savitskygolay = 2;

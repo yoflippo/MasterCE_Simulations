@@ -17,7 +17,7 @@ try
         sigmaPoints(i+n,:) = meanFilter - U(i-1,:);
     end
 catch
-    warning([mfilename ' chol() not working']);
+    error([mfilename ' chol() not working']);
     for i = 2:n+1
         tmpMrw = sqrt(sqrtMerwe(i-1,:));
         sigmaPoints(i,:) = meanFilter + tmpMrw;
