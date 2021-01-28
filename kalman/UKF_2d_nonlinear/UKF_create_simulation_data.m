@@ -1,4 +1,4 @@
-function [position,velocity,acceleration,clean,temporalspecs] = UKF_create_simulation_data(blRenewData)
+function [position,velocity,acceleration,clean,stemp] = UKF_create_simulation_data(blRenewData)
 if not(exist('blRenewData','var'))
     blRenewData = false;
 end
@@ -6,52 +6,52 @@ end
 matfilename = [mfilename '.mat'];
 cd(fileparts(mfilename('fullpath')));
 if not(exist(matfilename,'file')) || blRenewData
-    [position,velocity,acceleration,clean,temporalspecs] = generateAll();
+    [position,velocity,acceleration,clean,stemp] = generateAll();
     save(matfilename);
 else
     load(matfilename);
-    [position2,velocity2,acceleration2,clean2,temporalspecs2] = generateAll();
+    [position2,velocity2,acceleration2,clean2,stemp2] = generateAll();
     if (not(isequal(clean.position,clean2.position)) || ...
             not(isequal(clean.velocity,clean2.velocity)) || ...
             not(isequal(position.var,position2.var)) || ...
-            not(isequal(temporalspecs2.fs,temporalspecs.fs)) || ...
+            not(isequal(stemp2,stemp)) || ...
             not(isequal(position2.rotatedoffset,position.rotatedoffset)) || ...
             not(isequal(acceleration2.var,acceleration.var)) || ...
-            not(isequal(temporalspecs2.fs2,temporalspecs.fs2)) || ...
-            not(isequal(temporalspecs2.n,temporalspecs.n)) || ...
-            not(isequal(temporalspecs2.n2,temporalspecs.n2)) || ...
-            not(isequal(velocity.varAngles,velocity2.varAngles)) || ...
             not(isequal(velocity.var,velocity2.var)))
-        clear position2 clean2 velocity2 acceleration2 temporalspecs2
-        [position,velocity,acceleration,clean,temporalspecs] = generateAll();
+        clear position2 clean2 velocity2 acceleration2 stemp2
+        [position,velocity,acceleration,clean,stemp] = generateAll();
         save(matfilename);
     end
-    clear Signals2 clean2 velocity2 acceleration2 temporalspecs2
+    clear Signals2 clean2 velocity2 acceleration2 stemp2
 end
 
 if isequal(nargout,0)
     close all; clc;
-    t = temporalspecs.t;
-    t2 = temporalspecs.t2;
-    t3 = temporalspecs.t3;
+    t = stemp.t;
+    t2 = stemp.t2;
+    t3 = stemp.t3;
     figure('units','normalized','outerposition',[0.1 0.1 0.7 0.7])
     
     subplot(4,4,[1 2]);
-    plot(t,clean.position.x,'DisplayName','x'); hold on;
-    plot(t,position.xSavitskyGolay, 'DisplayName','x-Savitsky-Golay');
-    plot(t3,position.xSgolayUpsampled, 'DisplayName','x-Savitsky-Golay Upsampled');
+    
+    plot(t,position.savitskygolay.x, 'DisplayName','x-Savitsky-Golay'); hold on;
+    plot(t3,position.savitskygolayUpsamp.x, 'DisplayName','x-Savitsky-Golay Upsampled');
+    plot(t,clean.position.x,'DisplayName','x','Color','g','LineWidth',1);
+    plot(t,position.x, 'DisplayName','x-UWB','LineWidth',1);
     grid on; grid minor; title('x'); legend
     
     subplot(4,4,[5 6]);
-    plot(t,clean.position.y,'DisplayName','y');  hold on;
-    plot(t,position.ySavitskyGolay, 'DisplayName','y-Savitsky-Golay');
-    plot(t3,position.ySgolayUpsampled, 'DisplayName','y-Savitsky-Golay Upsampled');
+    plot(t,position.savitskygolay.y, 'DisplayName','y-Savitsky-Golay'); hold on;
+    plot(t3,position.savitskygolayUpsamp.y, 'DisplayName','y-Savitsky-Golay Upsampled');
+    plot(t,clean.position.y,'DisplayName','y','Color','g','LineWidth',1);
+    plot(t,position.y, 'DisplayName','x-UWB','LineWidth',1);
+    
     grid on; grid minor; title('y'); legend
     
     subplot(4,4,[9 10]);
     plot(t2,velocity.x,'DisplayName','velx');   hold on;
     plot(t2,velocity.y,'DisplayName','vely');
-    plot(t2,velocity.res,'DisplayName','vel RES');  
+    plot(t2,velocity.res,'DisplayName','vel RES');
     grid on; grid minor; title('velocity x/y');
     
     subplot(4,4,[13 14]);
@@ -60,10 +60,10 @@ if isequal(nargout,0)
     plot(t2,acceleration.res,'DisplayName','acc RES'); title('acceleration');
     
     subplot(4,4,[3 4 7 8 11 12]);
-    plot(clean.position.x,clean.position.y,'DisplayName','x-y clean'); hold on;
-    plot(position.x,position.y,'DisplayName','x-y UWB');
-    plot(position.xSavitskyGolay,position.ySavitskyGolay, 'DisplayName','x-y-Savitsky-Golay');
-    plot(position.xSgolayUpsampled,position.ySgolayUpsampled, 'DisplayName','x-y-Savitsky-Golay Upsampled');
+    plot(position.savitskygolay.x,position.savitskygolay.y, 'DisplayName','x-y-Savitsky-Golay');hold on;
+    plot(position.savitskygolayUpsamp.x,position.savitskygolayUpsamp.y, 'DisplayName','x-y-Savitsky-Golay Upsampled');
+    plot(clean.position.x,clean.position.y,'DisplayName','x-y clean','Color','g','LineWidth',1);
+    plot(position.x,position.y,'DisplayName','x-y UWB','LineWidth',1);
     title('x-y'); grid on; grid minor; legend
     axis equal;
     
@@ -92,18 +92,19 @@ clean.position.y = y;
 [dt,t,n] = createTemporalSpecs(fs,te);
 [dt2,t2,n2] = createTemporalSpecs(fs2,te);
 
-position.var = 2;
-position.x = generate_signal(x, position.var);
-position.y = generate_signal(y, position.var);
-sgolayN = 1;
+position.var.pos = 2;
+position.x = generate_signal(x, position.var.pos);
+position.y = generate_signal(y, position.var.pos);
 
-position.xSavitskyGolay = smooth(position.x,'sgolay',sgolayN);
-position.ySavitskyGolay = smooth(position.y,'sgolay',sgolayN);
+sgolayN = 3;
+position.savitskygolay.x = smooth(position.x,'sgolay',sgolayN);
+position.savitskygolay.y = smooth(position.y,'sgolay',sgolayN);
 
 fs3 = fs*4;
-[position.xSgolayUpsampled,position.ySgolayUpsampled] = increaseSampleRate(fs3,t,position.xSavitskyGolay,position.ySavitskyGolay);
-position.xSgolayUpsampled = generate_signal(position.xSgolayUpsampled,0.2);
-position.ySgolayUpsampled = generate_signal(position.ySgolayUpsampled,0.2);
+position.var.savitskygolay = 2;
+[position.savitskygolayUpsamp.x,position.savitskygolayUpsamp.y] = increaseSampleRate(fs3,t,position.savitskygolay.x,position.savitskygolay.y);
+position.savitskygolayUpsamp.x = generate_signal(position.savitskygolayUpsamp.x,position.var.savitskygolay);
+position.savitskygolayUpsamp.y = generate_signal(position.savitskygolayUpsamp.y,position.var.savitskygolay);
 [dt3,t3,n3] = createTemporalSpecs(fs3,te);
 
 
@@ -118,16 +119,16 @@ clean.velocity.y = gradient(y2rot,dt2);
 clean.velocity.res =  sqrt(clean.velocity.x.^2 + clean.velocity.y.^2);
 % clean.velocity.res = clean.velocity.res + simulate_slipping(t2);
 
-velocity.var = 0.1;
-velocity.x = generate_signal(clean.velocity.x, velocity.var); %rotated
-velocity.y = generate_signal(clean.velocity.y, velocity.var); %rotated
-velocity.res = generate_signal(clean.velocity.res, velocity.var);
+velocity.var.vel = 0.1;
+velocity.x = generate_signal(clean.velocity.x, velocity.var.vel); %rotated
+velocity.y = generate_signal(clean.velocity.y, velocity.var.vel); %rotated
+velocity.res = generate_signal(clean.velocity.res, velocity.var.vel);
 
 clean.velocity.angularRate = calculateAnglesBetweenXYpoints(x2rot,y2rot,dt2);
 clean.velocity.angles = cumtrapz(t2,clean.velocity.angularRate);
 
-velocity.varAngles = 20;
-velocity.angularRate = generate_signal(clean.velocity.angularRate,velocity.varAngles);
+velocity.var.angularRate = 20;
+velocity.angularRate = generate_signal(clean.velocity.angularRate,velocity.var.angularRate);
 velocity.angles = cumtrapz(t2,velocity.angularRate);
 
 acceleration.var = ones(length(t2),1)*2;

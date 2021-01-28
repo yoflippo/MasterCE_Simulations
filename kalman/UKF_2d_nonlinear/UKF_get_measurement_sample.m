@@ -7,22 +7,36 @@ if not(exist('boolInit','var'))
 end
 
 varianceAngularRate = 0.01;
+boolUseUpsampling = false;
 
 if boolInit
-    z = [position.x(i) position.y(i) ...
-        velocity.res(i) velocity.angularRate(i) ...
-        initAngleBasedOnUWB(position)]';
-    
-    vari = [ position.var(i) position.var(i) ...
-        velocity.var varianceAngularRate ...
-        10]';
+    if boolUseUpsampling
+        z = [position.savitskygolayUpsamp.x(i) position.savitskygolayUpsamp.y(i) ...
+            velocity.res(i) velocity.angularRate(i) ...
+            initAngleBasedOnUWB(position)]';
+        
+        vari = [ position.var.savitskygolay  position.var.savitskygolay  ...
+            velocity.var.vel varianceAngularRate 10]';
+    else
+        z = [position.x(i) position.y(i) ...
+            velocity.res(i) velocity.angularRate(i) ...
+            initAngleBasedOnUWB(position)]';
+        
+        vari = [ position.var.pos position.var.pos ...
+            velocity.var.vel varianceAngularRate 10]';
+    end
 else
     if not(boolPosition)
         z = [ velocity.angularRate(i) velocity.res(i)]';
-        vari = [varianceAngularRate velocity.var ]';
+        vari = [varianceAngularRate velocity.var.vel ]';
     else
-        z = [position.x(i) position.y(i)  ]';
-        vari = [position.var position.var ]';
+        if boolUseUpsampling
+            z = [position.savitskygolayUpsamp.x(i) position.savitskygolayUpsamp.y(i)  ]';
+            vari = [position.var.savitskygolay  position.var.savitskygolay  ]';
+        else
+            z = [position.x(i) position.y(i)  ]';
+            vari = [position.var.pos position.var.pos ]';
+        end
     end
 end
 

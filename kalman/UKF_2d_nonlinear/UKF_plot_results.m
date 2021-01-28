@@ -33,7 +33,7 @@ plot(clean.position.x, clean.position.y,'g', 'LineWidth', 2,'DisplayName','clean
 plot(UKFout(:, idxPosX), UKFout(:, idxPosY),'Color',[0 0 1],'LineWidth', 2,'DisplayName','KF result');
 grid on; grid minor; legend
 RMSE = rmse(distances([position.x2(1:nOutput) position.y2(1:nOutput)] , [UKFout(:,[idxPosX idxPosY])]) );
-title([add2title  ' xy, RMSE '  num2str(round(RMSE,3))])
+title([add2title  ' xy, RMSE '  num2str(round(RMSE,4))])
 axis equal;
 
 subplot(3,3,3);
