@@ -8,7 +8,7 @@ slipmoments = zeros(size(timevector));
 slipTimeBegin = round(length(timevector)/2);
 slipTimeEnd = slipTimeBegin + length(y)-1;
 
-slipmoments(slipTimeBegin:slipTimeEnd) = slipmoments(slipTimeBegin:slipTimeEnd) + y';
+slipmoments(slipTimeBegin:slipTimeEnd) = slipmoments(slipTimeBegin:slipTimeEnd) + 100*y';
 % plot(slipmoments);
 end
 

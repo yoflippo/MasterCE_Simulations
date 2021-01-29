@@ -75,10 +75,10 @@ end
 
 function [position,velocity,acceleration,clean,tspecs] = generateAll()
 te = 15; %sec
-courtwidth = 1500; %mm
-courtheigth = 4500; %mm
+courtwidth = 10;
+courtheigth = 20;
 
-fs = 10;  % position
+fs = 7;  % position
 fs2 = 100; % velocity
 
 [~,t,~] = createTemporalSpecs(fs,te);
@@ -92,16 +92,16 @@ clean.position.y = y;
 % [dt,t,n] = addJitter(fs,te);
 % [dt2,t2,n2] = addJitter(fs2,te);
 
-position.var.pos = 30000;
+position.var.pos = 2;
 position.x = generate_signal(x, position.var.pos);
 position.y = generate_signal(y, position.var.pos);
 
 sgolayN = 1;
-position.savitskygolay.x = smooth(position.x,5,'sgolay',sgolayN);
-position.savitskygolay.y = smooth(position.y,5,'sgolay',sgolayN);
+position.savitskygolay.x = smooth(position.x,'sgolay',sgolayN);
+position.savitskygolay.y = smooth(position.y,'sgolay',sgolayN);
 
 fs3 = fs*4;
-position.var.savitskygolay = 200;
+position.var.savitskygolay = 2;
 [position.savitskygolayUpsamp.x,position.savitskygolayUpsamp.y] = increaseSampleRate(fs3,t,position.savitskygolay.x,position.savitskygolay.y);
 position.savitskygolayUpsamp.x = generate_signal(position.savitskygolayUpsamp.x,position.var.savitskygolay);
 position.savitskygolayUpsamp.y = generate_signal(position.savitskygolayUpsamp.y,position.var.savitskygolay);
@@ -117,9 +117,9 @@ position.y2 = y2;
 clean.velocity.x = gradient(x2rot,dt2);
 clean.velocity.y = gradient(y2rot,dt2);
 clean.velocity.res =  sqrt(clean.velocity.x.^2 + clean.velocity.y.^2);
-clean.velocity.res = clean.velocity.res + simulate_slipping(t2);
+% clean.velocity.res = clean.velocity.res + simulate_slipping(t2);
 
-velocity.var.vel = 7000;
+velocity.var.vel = 0.1;
 velocity.x = generate_signal(clean.velocity.x, velocity.var.vel); %rotated
 velocity.y = generate_signal(clean.velocity.y, velocity.var.vel); %rotated
 velocity.res = generate_signal(clean.velocity.res, velocity.var.vel);
@@ -127,7 +127,7 @@ velocity.res = generate_signal(clean.velocity.res, velocity.var.vel);
 clean.velocity.angularRate = calculateAnglesBetweenXYpoints(x2rot,y2rot,dt2);
 clean.velocity.angles = cumtrapz(t2,clean.velocity.angularRate);
 
-velocity.var.angularRate = 200;
+velocity.var.angularRate = 20;
 velocity.angularRate = generate_signal(clean.velocity.angularRate,velocity.var.angularRate);
 velocity.angles = cumtrapz(t2,velocity.angularRate);
 
@@ -232,7 +232,7 @@ function [xrot,yrot,x,y] = rotateAndAddOffset(t,courtwidth,courtheigth)
 R = getRotationMatrixZ(130);
 R = R(2:end,2:end);
 [x,y] = eightshape_variation(t,courtwidth,courtheigth);
-randomOffset = 1000;
+randomOffset = 10;
 CDR = ([x y]+randomOffset)*R;
 xrot = CDR(:,1);
 yrot = CDR(:,2);

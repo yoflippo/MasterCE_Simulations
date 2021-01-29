@@ -6,7 +6,7 @@ if not(exist('boolInit','var'))
     boolInit = false;
 end
 
-varianceAngularRate = 0.01;
+varianceAngularRate = 10;
 boolUseUpsampling = false;
 boolUseSavitsky = false;
 
