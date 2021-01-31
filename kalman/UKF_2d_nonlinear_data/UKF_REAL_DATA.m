@@ -1,12 +1,14 @@
-function [positionuwb,velocity,clean,temporalspecs] = UKF_REAL_DATA()
+function [position,velocity,clean,temporalspecs] = UKF_REAL_DATA()
 
 cd(fileparts(mfilename('fullpath')));
 cd('synced_measurement_data');
-load('W_RANG_(~)_RS_03.mat');
+load('W_RANG_(~)_RS_04.mat');
 
-[uwbsl, optisl] = makeSameLength(uwb,opti); % uwbsl = improveUWB(uwbsl,00);
+[uwb,opti,wmpm] = cutSynchronizationPartofMeasurementOff(uwb,opti,wmpm);
 
-t = uwbsl.time;
+[uwb, opti] = makeSameLength(uwb,opti);
+
+t = uwb.time;
 dt = mean(diff(t));
 n = numel(t);
 fs = 1/dt;
@@ -16,22 +18,19 @@ dt2 = mean(diff(t2));
 n2 = numel(t2);
 fs2 = 1/dt2;
 
-positionuwb.xDownSampledOpti = optisl.x;
-positionuwb.yDownSampledOpti = optisl.y;
+position.xDownSampledOpti = opti.xDownSampled;
+position.yDownSampledOpti = opti.yDownSampled;
 
-positionuwb.x = uwbsl.x;
-positionuwb.y = uwbsl.y;
-% positionuwb.x = smooth(uwbsl.x,2) ;
-% positionuwb.y = smooth(uwbsl.y,2) ;
-% positionuwb.x = smooth(uwbsl.x,'sgolay',2) ;
-% positionuwb.y = smooth(uwbsl.y,'sgolay',2) ;
+position.x = uwb.x;
+position.y = uwb.y;
 
 clean.position.x = opti.coord.x;
 clean.position.y = opti.coord.y;
+clean.position.time = opti.time;
 
-clean.velocity.x = gradient(opti.coord.x,dt2);
-clean.velocity.y = gradient(opti.coord.y,dt2);
-clean.velocity.res = gradient(sqrt((opti.coord.x.^2) + (opti.coord.y.^2)),dt2);
+clean.velocity.x = gradient(clean.position.x,dt2);
+clean.velocity.y = gradient(clean.position.y,dt2);
+clean.velocity.res = gradient(sqrt((clean.position.x.^2) + (clean.position.y.^2)),dt2);
 
 velocity.res = wmpm.velframe*1000;
 velocity.angularRate = wmpm.angularRate;
@@ -50,40 +49,57 @@ temporalspecs.n   = n;
 if isequal(nargout,0)
     close all; clc;
     subplot(4,1,1);  
-    plot(opti.time,opti.coord.x,'DisplayName','x opti');  grid on; grid minor; hold on;
-    plot(uwbsl.time,positionuwb.x,'DisplayName','x uwb'); legend(); title('Coordinates X')
+    plot(clean.position.time,clean.position.x,'DisplayName','x opti');  grid on; grid minor; hold on;
+    plot(uwb.time,position.x,'DisplayName','x uwb'); legend(); title('Coordinates X')
     
     subplot(4,1,2);
-    plot(opti.time,opti.coord.y,'DisplayName','y opti');grid on; grid minor; hold on;
-    plot(uwbsl.time,positionuwb.y,'DisplayName','y uwb'); legend(); title('Coordinates Y')
+    plot(clean.position.time,clean.position.y,'DisplayName','y opti');grid on; grid minor; hold on;
+    plot(uwb.time,position.y,'DisplayName','y uwb'); legend(); title('Coordinates Y')
     
     subplot(4,1,3);
-    plot(t2,velocity.res,'DisplayName','res. vel. WMPM');  grid on; grid minor; hold on;
-    plot(opti.time,clean.velocity.res,'DisplayName','res. vel. OPTI'); legend(); title('Resultant velocities')
+    plot(wmpm.time,velocity.res,'DisplayName','res. vel. WMPM');  grid on; grid minor; hold on;
+    plot(clean.position.time,clean.velocity.res,'DisplayName','res. vel. OPTI'); legend(); title('Resultant velocities')
     
     subplot(4,1,4);
-    plot(t2,velocity.angularRate,'DisplayName','res. vel. WMPM');  grid on; grid minor; hold on;
-    %     plot(opti.time,clean.velocity.res,'DisplayName','res. vel. OPTI');
+    plot(wmpm.time,velocity.angularRate,'DisplayName','res. vel. WMPM');  grid on; grid minor; hold on;
+%     plot(clean.position.time,clean.velocity.res,'DisplayName','res. vel. OPTI');
     legend(); title('Angularrate')
 end
 end
 
 
-function [uwbsl, optisl] = makeSameLength(uwb,opti)
+function [uwb,opti,wmpm] = cutSynchronizationPartofMeasurementOff(uwb,opti,wmpm)
+uwb = cutDirtySyncOff(uwb);
+opti = cutDirtySyncOff(opti);
+wmpm = cutDirtySyncOff(wmpm);
+
+idxsWMPM = wmpm.cleanSignalTimeIdx(1):wmpm.cleanSignalTimeIdx(2);
+wmpm.velframe = wmpm.velframe(idxsWMPM);
+wmpm.angularRate = wmpm.angularRate(idxsWMPM);
+
+    function sData = cutDirtySyncOff(sData)
+        Idxs = sData.cleanSignalTimeIdx(1):sData.cleanSignalTimeIdx(2);
+        sData.time = sData.time(Idxs);
+        sData.time = sData.time - sData.time(1);
+        sData.coord.x = sData.coord.x(Idxs);
+        sData.coord.y = sData.coord.y(Idxs);
+    end
+end
+
+
+function [uwb, opti] = makeSameLength(uwb,opti)
 maxTimeUwb = uwb.time(end);
 maxTimeOpti = opti.time(end);
 maxTimeRound = round(min(maxTimeUwb,maxTimeOpti));
 vecTime = 0:1/10:max(maxTimeRound);
 
-uwbsl.x = interp1(uwb.time,uwb.coord.x,vecTime)';
-uwbsl.y = interp1(uwb.time,uwb.coord.y,vecTime)';
-uwbsl.time = vecTime;
-uwbsl = makeNaNZeroStruct(uwbsl);
+uwb.x = interp1(uwb.time,uwb.coord.x,vecTime)';
+uwb.y = interp1(uwb.time,uwb.coord.y,vecTime)';
+uwb.time = vecTime;
 
-optisl.x = interp1(opti.time,opti.coord.x,vecTime)';
-optisl.y = interp1(opti.time,opti.coord.y,vecTime)';
-optisl.time = vecTime;
-optisl = makeNaNZeroStruct(optisl);
+opti.xDownSampled = interp1(opti.time,opti.coord.x,vecTime)';
+opti.yDownSampled = interp1(opti.time,opti.coord.y,vecTime)';
+opti.timeDownSampled = vecTime;
 end
 
 
@@ -130,6 +146,7 @@ drawToTestAngles(angularRate,dt,x,y)
             end
         end
     end
+
 
     function drawToTestAngles(angularRate,dt,x,y)
         close all;

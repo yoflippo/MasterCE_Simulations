@@ -13,7 +13,7 @@ for i = 1:length(tVelocity)-1
     if i == 1
         [z, R] = UKF_get_measurement_sample(position,velocity,[],i,1,true);
         [x, P] = UKF_init(z,R);
-        weights = UKF_weights(length(x),0.1,2,1);
+        weights = UKF_weights(length(x),0.1,2,4);
     else
         sigmaPoints = MerweScaledSigmaPoints(x,P,weights);
         [x, P,sigmaPoints_f] = UKF_predict(sigmaPoints,weights, @UKF_Q, @UKF_f, tVelocity(i+1)-tVelocity(i));
