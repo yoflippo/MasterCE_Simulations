@@ -168,6 +168,7 @@ x = interp1(t,x,vecTime')';
 y = interp1(t,y,vecTime')';
 end
 
+
 function [dt,t,n] = createTemporalSpecs(samplerate,durationSeconds)
 dt = 1/samplerate;
 t=(0:dt:durationSeconds)';

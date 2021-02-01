@@ -1,7 +1,15 @@
-function [] = UKF_main_nonlinear()
+function [UKF_RTS_x] = UKF_main_nonlinear(ap)
+
+if not(exist('ap','var'))
+    ap = [];
+    blVisiblePlots = 1;
+    close all; 
+else
+    blVisiblePlots = 0;
+end
 
 % [position,velocity,acceleration,clean,ts] = UKF_create_simulation_data();
-[position,velocity,clean,ts] = UKF_REAL_DATA();
+[position,velocity,clean,ts] = UKF_REAL_DATA(ap);
 
 cd(fileparts(mfilename('fullpath')));
 
@@ -36,7 +44,7 @@ end
 
 UKF_RTS_x = UKF_RTS_smooth(UKF_x, UKF_P, UKF_Q(ts.dt2),ts.dt2,weights);
 
-blVisiblePlots = 1; close all; name = replace(mfilename,'_','\_');
+name = replace(mfilename,'_','\_');
 RMSE1 = UKF_plot_results_data(ts,clean,position,UKF_x,velocity,[name],blVisiblePlots);
 [RMSE2, RMSERAW] = UKF_plot_results_data(ts,clean,position,UKF_RTS_x,velocity,[name ' RTS'],blVisiblePlots);
 distFig; errors = [RMSE1 RMSE2 RMSERAW]

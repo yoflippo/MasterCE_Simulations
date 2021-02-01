@@ -1,8 +1,14 @@
-function [position,velocity,clean,temporalspecs] = UKF_REAL_DATA()
+function [position,velocity,clean,temporalspecs] = UKF_REAL_DATA(ap)
 
 cd(fileparts(mfilename('fullpath')));
 cd('synced_measurement_data');
-load('W_RANG_(~)_RS_04.mat');
+
+if not(exist('ap','var'))
+    load('W_RANG_(~)_RS_00.mat');
+else
+    load(ap);
+end
+
 
 [uwb,opti,wmpm] = cutSynchronizationPartofMeasurementOff(uwb,opti,wmpm);
 
@@ -48,7 +54,7 @@ temporalspecs.n   = n;
 
 if isequal(nargout,0)
     close all; clc;
-    subplot(4,1,1);  
+    subplot(4,1,1);
     plot(clean.position.time,clean.position.x,'DisplayName','x opti');  grid on; grid minor; hold on;
     plot(uwb.time,position.x,'DisplayName','x uwb'); legend(); title('Coordinates X')
     
@@ -62,7 +68,7 @@ if isequal(nargout,0)
     
     subplot(4,1,4);
     plot(wmpm.time,velocity.angularRate,'DisplayName','res. vel. WMPM');  grid on; grid minor; hold on;
-%     plot(clean.position.time,clean.velocity.res,'DisplayName','res. vel. OPTI');
+    %     plot(clean.position.time,clean.velocity.res,'DisplayName','res. vel. OPTI');
     legend(); title('Angularrate')
 end
 end
