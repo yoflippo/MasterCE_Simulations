@@ -1,27 +1,29 @@
 function UKF_plotXYofWMPM_UWB_OPTITRACK()
-%% This function assumes it is in a folder that contains the folder 'synced'
-% which contains MAT-files with coordinates of the systems mentioned in the
-% title of this function.
-close all; clc; clearvars;
+close all; clc;
 [ap.thisFile, nm.CurrFile] = fileparts(mfilename('fullpath'));
 cd(ap.thisFile)
 
-nameOfdir = 'synced_measurement_data';
-if not(exist(nameOfdir,'dir'))
+nameOfdir = 'synced';
+apsynced = findSubFolderPath(ap.thisFile,'MATLAB',nameOfdir);
+
+if not(exist(apsynced,'dir'))
     error([newline mfilename ': ' newline 'Folder "' nameOfdir '" does not exist!' newline]);
 end
-addpath(genpath(nameOfdir))
+addpath(genpath(apsynced))
 
-cd(nameOfdir);
-
+cd(apsynced);
 files = makeFullPathFromDirOutput(dir('*.mat'));
-ap.measurement = files(3).fullpath;
+cd(ap.thisFile)
 
-load(ap.measurement);
-plotTheSystems(opti,uwb,wmpm,ap);
-%     saveTightFigure(gcf,replace(files(nF).name,'.mat','.png'))
-
+for nF = 1:length(files)
+    ap.measurement = files(nF).fullpath;
+    load(ap.measurement);
+    plotTheSystems(opti,uwb,wmpm,ap);
+    saveTightFigure(gcf,replace(files(nF).name,'.mat','.png')); 
+    close all;
 end
+end
+
 
 function plotTheSystems(opti,uwb,wmpm,ap)
 figure('units','normalized','outerposition',[0.1 0.1 0.9 0.9]);
@@ -32,8 +34,8 @@ plotMarkerStartAndfinish(opti)
 xlabel('x-coordinates'); ylabel('y-coordinates');
 title('Optitrack coordinates');
 axis equal
-xlimvals = get(gca,'XLim');
-ylimvals = get(gca,'YLim');
+xlimvals = get(gca,'XLim')*1.05; 
+ylimvals = get(gca,'YLim')*1.05;
 grid on; grid minor;
 
 offsetWMPM = getOffsetToMakeWMPMStartAtUWBlocation(uwb,wmpm);
@@ -71,11 +73,13 @@ ylim(ylimvals); xlim(xlimvals);
 set(findall(0,'type','line'),'linewidth',2);
 end
 
+
 function plotMarkerStartAndfinish(data)
 hold on;
 plot(data.coord.x(1),data.coord.y(1),'ok','LineWidth',2,'MarkerSize',9);
 plot(data.coord.x(end),data.coord.y(end),'xk','LineWidth',2,'MarkerSize',9);
 end
+
 
 function offsetWMPM = getOffsetToMakeWMPMStartAtUWBlocation(uwb,wmpm)
 offsetWMPM = [wmpm.coord.x(1)-uwb.coord.x(1) wmpm.coord.y(1)-uwb.coord.y(1)];

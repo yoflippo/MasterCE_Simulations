@@ -17,7 +17,7 @@ if boolInit
 else
     if not(boolPosition)
         z = [ velocity.angularRate(i) velocity.res(i)]';
-        vari = [0.01 0.1]';
+        vari = [0.01 0.05]';
     else
         z = [position.x(i) position.y(i)  ]';
         vari = ones(2,1)*10;

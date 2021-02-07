@@ -1,10 +1,11 @@
 function [position,velocity,clean,temporalspecs] = UKF_REAL_DATA(ap)
+apfullpath = fileparts(mfilename('fullpath'));
+cd(apfullpath);
+apsynced = findSubFolderPath(apfullpath,'MATLAB','synced');
+cd(apsynced);
 
-cd(fileparts(mfilename('fullpath')));
-cd('synced_measurement_data');
-
-if not(exist('ap','var'))
-    load('W_RANG_(~)_RS_00.mat');
+if not(exist('ap','var')) || isempty(ap)
+    load('W_RANG_(~)_RS_02.mat');
 else
     load(ap);
 end

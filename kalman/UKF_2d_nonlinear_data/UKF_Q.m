@@ -5,13 +5,13 @@ if not(exist('variance','var'))
 end
 
 posvar = 2;
-Q = [posvar*dt  0         0  	  0       0        0         0;
-     0          posvar*dt 0 	  0       0       0          0;
+Q = [posvar*dt  0.00    0  	  0       0       0.00       0.000;
+     0          posvar*dt 0 	  0       0       0.00       0.000;
      0          0         dt^2	  0       0       0           0;
      0          0         0       dt^2    0       0           0;
      0          0         0       0       0.1     0           0;
-     0          0         0       0       0       0.5*dt^2        0;
-     0          0         0       0       0       0           1.5]*variance;
+     0          0         0       0       0       0.1*dt^2    0;
+     0          0         0       0       0       0           1]*variance;
 
 Q = Q+triu(Q,-1).'; % make it symmetric
 end

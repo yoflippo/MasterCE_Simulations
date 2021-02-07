@@ -1,7 +1,7 @@
 function Q = UKF_Q(dt,variance)
 %% Calculate system noise
 if not(exist('variance','var'))
-    variance =20;
+    variance = 20;
 end
 
 posvar = 10;
