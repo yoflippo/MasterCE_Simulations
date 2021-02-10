@@ -19,109 +19,117 @@ for nF = 1:length(files)
     ap.measurement = files(nF).fullpath;
     load(ap.measurement);
     
-    UKF = plotTheSystems(opti,uwb,wmpm,ap);
-    saveTightFigure(gcf,replace(files(nF).name,'.mat','.png'));
+    UKF = plotTheSystems(opti,uwb,wmpm,ap,sOpti);
+    exportgraphics(gcf,replace(files(nF).name,'.mat','.png'),'BackgroundColor','none');
     
-    plotOptitrackAndUWB(opti,uwb,wmpm,ap)
-    saveTightFigure(gcf,replace(files(nF).name,'.mat','_uwbopti.png'));
+    plotOptitrackAndUWB(opti,uwb,wmpm,ap,sOpti);
+    exportgraphics(gcf,replace(files(nF).name,'.mat','_uwbopti.png'),'BackgroundColor','none');
     
-    plotOptitrackAndUKF(opti,uwb,wmpm,UKF,ap)
-    saveTightFigure(gcf,replace(files(nF).name,'.mat','_opti_UKF.png'));
+    plotOptitrackAndUKF(opti,uwb,wmpm,UKF,ap,sOpti);
+    exportgraphics(gcf,replace(files(nF).name,'.mat','_opti_UKF.png'),'BackgroundColor','none');
     close all;
 end
 end
 
 
-function UKF_OUT = plotTheSystems(opti,uwb,wmpm,ap)
+function UKF_OUT = plotTheSystems(opti,uwb,wmpm,ap,sOpti)
 figure('units','normalized','outerposition',[0.1 0.1 0.9 0.9]);
-
-subplot(2,2,1);
+t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
+nexttile
 optiClean = opti.cleanSignalTimeIdx(1):opti.cleanSignalTimeIdx(2);
-plot(opti.coord.x(optiClean), opti.coord.y(optiClean),'g');
-plotMarkerStartAndfinish(opti)
-xlabel('x-coordinates'); ylabel('y-coordinates');
+% plot(opti.coord.x(optiClean), opti.coord.y(optiClean),'g'); hold on;
+optiClean = optiClean + opti.syncPoints(2);
+scatter(opti.notfilled.x(optiClean-1),opti.notfilled.y(optiClean-1),'g.');
+
+plotMarkerStartAndfinish(opti);
 title('Optitrack coordinates');
-axis equal
-xlimvals = get(gca,'XLim')*1.05;
-ylimvals = get(gca,'YLim')*1.05;
-grid on; grid minor;
 
-offsetWMPM = getOffsetToMakeWMPMStartAtUWBlocation(uwb,wmpm);
-
-subplot(2,2,2);
 wmpmClean = wmpm.cleanSignalTimeIdx(1):wmpm.cleanSignalTimeIdx(2);
-plot(wmpm.coord.x(wmpmClean),wmpm.coord.y(wmpmClean),'b');
-hold on;
+xlimvals = [min(wmpm.coord.x(wmpmClean)) max(wmpm.coord.x(wmpmClean))];
+ylimvals = [min(wmpm.coord.y(wmpmClean)) max(wmpm.coord.y(wmpmClean))];
+xlimvals = [min(min(xlimvals), min(opti.notfilled.x(optiClean-1))) max(max(xlimvals), max(opti.notfilled.x(optiClean-1)))]*1.15;
+ylimvals = [min(min(ylimvals), min(opti.notfilled.y(optiClean-1))) max(max(ylimvals), max(opti.notfilled.y(optiClean-1)))]*1.15;
+
+setupPlot(xlimvals,ylimvals);
+
+
+nexttile
+wmpmClean = wmpm.cleanSignalTimeIdx(1):wmpm.cleanSignalTimeIdx(2);
+plot(wmpm.coord.x(wmpmClean),wmpm.coord.y(wmpmClean),'b'); hold on;
 % plot(wmpm.coord.x - offsetWMPM(1),wmpm.coord.y - offsetWMPM(2),'r');
 plotMarkerStartAndfinish(wmpm)
-xlabel('x-coordinates'); ylabel('y-coordinates');
 title('WMPM Coordinates');
-grid on; grid minor;
-axis equal
-ylim(ylimvals); xlim(xlimvals);
+setupPlot(xlimvals,ylimvals);
 
-subplot(2,2,3);
+
+nexttile
 uwbClean = uwb.cleanSignalTimeIdx(1):uwb.cleanSignalTimeIdx(2);
-plot(uwb.coord.x(uwbClean), uwb.coord.y(uwbClean),'r');
+plot(uwb.coord.x(uwbClean), uwb.coord.y(uwbClean),'r'); hold on;
 plotMarkerStartAndfinish(uwb)
-xlabel('x-coordinates'); ylabel('y-coordinates');
 title('UWB Coordinates');
-grid on; grid minor;
-axis equal
-ylim(ylimvals); xlim(xlimvals);
-set(findall(0,'type','line'),'linewidth',2);
+setupPlot(xlimvals,ylimvals)
 
-subplot(2,2,4);
+
+nexttile
 UKF_OUT = UKF_main_nonlinear(ap.measurement);
-plot(UKF_OUT(:,1), UKF_OUT(:,2),'m');
+plot(UKF_OUT(:,1), UKF_OUT(:,2),'m'); hold on;
 plotMarkerStartAndfinish(UKF_OUT,[UKF_OUT(1,1) UKF_OUT(1,2)],[UKF_OUT(end,1) UKF_OUT(end,2)])
-xlabel('x-coordinates'); ylabel('y-coordinates');
 title('UKF Coordinates');
-grid on; grid minor;
-axis equal
-ylim(ylimvals); xlim(xlimvals);
-set(findall(0,'type','line'),'linewidth',2);
+setupPlot(xlimvals,ylimvals)
 end
 
 
-function plotOptitrackAndUWB(opti,uwb,wmpm,ap)
+function setupPlot(xlimvals,ylimvals, blLegend)
+xlabel('x-coordinates [mm]'); ylabel('y-coordinates [mm]');
+grid on; grid minor; box on; axis equal; box on;
+set(findall(0,'type','line'),'linewidth',2);
+if exist('blLegend','var') && not(isempty(blLegend))
+    legend
+end
+if exist('xlimvals','var') && not(isempty(xlimvals))
+    ylim(ylimvals); xlim(xlimvals);
+end
+end
+
+
+function plotOptitrackAndUWB(opti,uwb,wmpm,ap,sOpti)
 figure('units','normalized','outerposition',[0.1 0.1 0.9 0.9]);
 
 optiClean = opti.cleanSignalTimeIdx(1):opti.cleanSignalTimeIdx(2);
-plot(opti.coord.x(optiClean), opti.coord.y(optiClean),'g','DisplayName','Optitrack coordinates'); hold on;
+% plot(opti.coord.x(optiClean), opti.coord.y(optiClean),'g','DisplayName','Optitrack coordinates'); hold on;
+
+optiClean = optiClean + opti.syncPoints(2);
+scatter(opti.notfilled.x(optiClean-1),opti.notfilled.y(optiClean-1),'g.','DisplayName','Optitrack coordinates'); hold on;
 
 uwbClean = uwb.cleanSignalTimeIdx(1):uwb.cleanSignalTimeIdx(2);
 plot(uwb.coord.x(uwbClean), uwb.coord.y(uwbClean),'r','DisplayName', 'UWB coordinates');
-xlabel('x-coordinates');
-ylabel('y-coordinates');
-axis equal
+
+title('Optitrack and UWB coordinates');
+setupPlot([],[], 1);
 
 xlim([min(uwb.coord.x) max(uwb.coord.x)]*1.05);
 ylim([min(uwb.coord.y) max(uwb.coord.y)]*1.05);
-title('Optitrack and UWB coordinates');
-legend
-grid on; grid minor;
-set(findall(0,'type','line'),'linewidth',2);
 end
 
 
-function plotOptitrackAndUKF(opti,uwb,wmpm,ukf,ap)
+function plotOptitrackAndUKF(opti,uwb,wmpm,ukf,ap,sOpti)
 figure('units','normalized','outerposition',[0.1 0.1 0.9 0.9]);
 
 optiClean = opti.cleanSignalTimeIdx(1):opti.cleanSignalTimeIdx(2);
-plot(opti.coord.x(optiClean), opti.coord.y(optiClean),'g','DisplayName','Optitrack coordinates'); hold on;
+% plot(opti.coord.x(optiClean), opti.coord.y(optiClean),'g','DisplayName','Optitrack coordinates'); hold on;
+optiClean = optiClean + opti.syncPoints(2);
+scatter(opti.notfilled.x(optiClean-1),opti.notfilled.y(optiClean-1),'g.','DisplayName','Optitrack coordinates'); hold on;
 
 plot(ukf(:,1),ukf(:,2), 'm','DisplayName', 'UKF');
-xlabel('x-coordinates');
-ylabel('y-coordinates');
+xlabel('x-coordinates [mm]');
+ylabel('y-coordinates [mm]');
 axis equal
+
+title('UKF coordinates vs. Optitrack');
+setupPlot([],[], 1);
 
 xlim([min(ukf(:,1)) max(ukf(:,1))]*1.05);
 ylim([min(ukf(:,2)) max(ukf(:,2))]*1.05);
-title('UKF coordinates vs. Optitrack');
-legend
-grid on; grid minor;
-set(findall(0,'type','line'),'linewidth',2);
 end
 
 
@@ -129,12 +137,12 @@ function plotMarkerStartAndfinish(data,start,finished)
 if not(exist('start','var')) && not(exist('finished','var'))
     hold on;
     cleanIdxStart = data.cleanSignalTimeIdx(1); cleanIdxEnd = data.cleanSignalTimeIdx(2);
-    plot(data.coord.x(cleanIdxStart),data.coord.y(cleanIdxStart),'ok','LineWidth',2,'MarkerSize',9);
-    plot(data.coord.x(cleanIdxEnd),data.coord.y(cleanIdxEnd),'xk','LineWidth',2,'MarkerSize',9);
+    plot(data.coord.x(cleanIdxStart),data.coord.y(cleanIdxStart),'ok','LineWidth',2,'MarkerSize',9,'DisplayName','start');
+    plot(data.coord.x(cleanIdxEnd),data.coord.y(cleanIdxEnd),'xk','LineWidth',2,'MarkerSize',9,'DisplayName','end');
 else
     hold on;
-    plot(start(1),start(2),'ok','LineWidth',2,'MarkerSize',9);
-    plot(finished(1),finished(2),'xk','LineWidth',2,'MarkerSize',9);
+    plot(start(1),start(2),'ok','LineWidth',2,'MarkerSize',9,'DisplayName','start');
+    plot(finished(1),finished(2),'xk','LineWidth',2,'MarkerSize',9,'DisplayName','end');
 end
 end
 
