@@ -64,6 +64,7 @@ if isequal(nargout,0)
     plot(position.savitskygolayUpsamp.x,position.savitskygolayUpsamp.y, 'DisplayName','x-y-Savitsky-Golay Upsampled');
     plot(clean.position.x,clean.position.y,'DisplayName','x-y clean','Color','g','LineWidth',1);
     plot(position.x,position.y,'DisplayName','x-y UWB','LineWidth',1);
+    plot(position.rotatedoffset.x,position.rotatedoffset.y,'DisplayName','x-y WMPM','LineWidth',1);
     title('x-y'); grid on; grid minor; legend
     axis equal;
     
@@ -74,11 +75,11 @@ end
 end
 
 function [position,velocity,acceleration,clean,tspecs] = generateAll()
-te = 15; %sec
-courtwidth = 1500; %mm
-courtheigth = 4500; %mm
+te = 10; %sec
+courtwidth = 2000; %mm
+courtheigth = 5000; %mm
 
-fs = 10;  % position
+fs = 8;  % position
 fs2 = 100; % velocity
 
 [~,t,~] = createTemporalSpecs(fs,te);
@@ -92,9 +93,9 @@ clean.position.y = y;
 % [dt,t,n] = addJitter(fs,te);
 % [dt2,t2,n2] = addJitter(fs2,te);
 
-position.var.pos = 30000;
-position.x = generate_signal(x, position.var.pos);
-position.y = generate_signal(y, position.var.pos);
+position.var.pos = 20000;
+position.x = generate_signal(x, position.var.pos*2);
+position.y = generate_signal(y, position.var.pos*2);
 
 sgolayN = 1;
 position.savitskygolay.x = smooth(position.x,5,'sgolay',sgolayN);
@@ -119,7 +120,7 @@ clean.velocity.y = gradient(y2rot,dt2);
 clean.velocity.res =  sqrt(clean.velocity.x.^2 + clean.velocity.y.^2);
 clean.velocity.res = clean.velocity.res + simulate_slipping(t2);
 
-velocity.var.vel = 7000;
+velocity.var.vel = 10000;
 velocity.x = generate_signal(clean.velocity.x, velocity.var.vel); %rotated
 velocity.y = generate_signal(clean.velocity.y, velocity.var.vel); %rotated
 velocity.res = generate_signal(clean.velocity.res, velocity.var.vel);
@@ -127,7 +128,7 @@ velocity.res = generate_signal(clean.velocity.res, velocity.var.vel);
 clean.velocity.angularRate = calculateAnglesBetweenXYpoints(x2rot,y2rot,dt2);
 clean.velocity.angles = cumtrapz(t2,clean.velocity.angularRate);
 
-velocity.var.angularRate = 200;
+velocity.var.angularRate = 400;
 velocity.angularRate = generate_signal(clean.velocity.angularRate,velocity.var.angularRate);
 velocity.angles = cumtrapz(t2,velocity.angularRate);
 

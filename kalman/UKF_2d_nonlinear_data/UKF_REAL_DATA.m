@@ -5,7 +5,7 @@ apsynced = findSubFolderPath(apfullpath,'MATLAB','synced');
 cd(apsynced);
 
 if not(exist('ap','var')) || isempty(ap)
-    load('W_RANG_(~)_RS_02.mat');
+    load('W_RANG_(~)_RS_00.mat');
 else
     load(ap);
 end

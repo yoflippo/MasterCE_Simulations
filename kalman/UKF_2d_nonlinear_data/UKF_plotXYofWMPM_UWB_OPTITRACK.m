@@ -19,8 +19,8 @@ for nF = 1:length(files)
     ap.measurement = files(nF).fullpath;
     load(ap.measurement);
     
-    UKF = plotTheSystems(opti,uwb,wmpm,ap,sOpti);
-    exportgraphics(gcf,replace(files(nF).name,'.mat','.png'),'BackgroundColor','none');
+    UKF = plotTheSystems(opti,uwb,wmpm,ap,sOpti,files(nF));
+
     
     plotOptitrackAndUWB(opti,uwb,wmpm,ap,sOpti);
     exportgraphics(gcf,replace(files(nF).name,'.mat','_uwbopti.png'),'BackgroundColor','none');
@@ -32,15 +32,14 @@ end
 end
 
 
-function UKF_OUT = plotTheSystems(opti,uwb,wmpm,ap,sOpti)
+function UKF_OUT = plotTheSystems(opti,uwb,wmpm,ap,sOpti,files)
+
 figure('units','normalized','outerposition',[0.1 0.1 0.9 0.9]);
-t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
-nexttile
 optiClean = opti.cleanSignalTimeIdx(1):opti.cleanSignalTimeIdx(2);
 % plot(opti.coord.x(optiClean), opti.coord.y(optiClean),'g'); hold on;
 optiClean = optiClean + opti.syncPoints(2);
 scatter(opti.notfilled.x(optiClean-1),opti.notfilled.y(optiClean-1),'g.');
-
+hold on;
 plotMarkerStartAndfinish(opti);
 title('Optitrack coordinates');
 
@@ -51,31 +50,35 @@ xlimvals = [min(min(xlimvals), min(opti.notfilled.x(optiClean-1))) max(max(xlimv
 ylimvals = [min(min(ylimvals), min(opti.notfilled.y(optiClean-1))) max(max(ylimvals), max(opti.notfilled.y(optiClean-1)))]*1.15;
 
 setupPlot(xlimvals,ylimvals);
+exportgraphics(gcf,replace(files.name,'.mat','_1.png'),'BackgroundColor','none'); close all;
 
 
-nexttile
+figure('units','normalized','outerposition',[0.1 0.1 0.9 0.9]);
 wmpmClean = wmpm.cleanSignalTimeIdx(1):wmpm.cleanSignalTimeIdx(2);
 plot(wmpm.coord.x(wmpmClean),wmpm.coord.y(wmpmClean),'b'); hold on;
 % plot(wmpm.coord.x - offsetWMPM(1),wmpm.coord.y - offsetWMPM(2),'r');
 plotMarkerStartAndfinish(wmpm)
 title('WMPM Coordinates');
 setupPlot(xlimvals,ylimvals);
+exportgraphics(gcf,replace(files.name,'.mat','_2.png'),'BackgroundColor','none'); close all;
 
 
-nexttile
+figure('units','normalized','outerposition',[0.1 0.1 0.9 0.9]);
 uwbClean = uwb.cleanSignalTimeIdx(1):uwb.cleanSignalTimeIdx(2);
 plot(uwb.coord.x(uwbClean), uwb.coord.y(uwbClean),'r'); hold on;
 plotMarkerStartAndfinish(uwb)
 title('UWB Coordinates');
 setupPlot(xlimvals,ylimvals)
+exportgraphics(gcf,replace(files.name,'.mat','_3.png'),'BackgroundColor','none'); close all;
 
 
-nexttile
+figure('units','normalized','outerposition',[0.1 0.1 0.9 0.9]);
 UKF_OUT = UKF_main_nonlinear(ap.measurement);
 plot(UKF_OUT(:,1), UKF_OUT(:,2),'m'); hold on;
 plotMarkerStartAndfinish(UKF_OUT,[UKF_OUT(1,1) UKF_OUT(1,2)],[UKF_OUT(end,1) UKF_OUT(end,2)])
 title('UKF Coordinates');
 setupPlot(xlimvals,ylimvals)
+exportgraphics(gcf,replace(files.name,'.mat','_4.png'),'BackgroundColor','none'); close all;
 end
 
 
