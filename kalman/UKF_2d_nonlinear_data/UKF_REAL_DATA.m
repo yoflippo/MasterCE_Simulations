@@ -5,7 +5,7 @@ apsynced = findSubFolderPath(apfullpath,'MATLAB','synced');
 cd(apsynced);
 
 if not(exist('ap','var')) || isempty(ap)
-    load('W_RANG_(~)_RS_00.mat');
+    load('W_RANG_(~)_RS_02.mat');
 else
     load(ap);
 end
@@ -98,10 +98,16 @@ function [uwb, opti] = makeSameLength(uwb,opti)
 maxTimeUwb = uwb.time(end);
 maxTimeOpti = opti.time(end);
 maxTimeRound = round(min(maxTimeUwb,maxTimeOpti));
-vecTime = 0:1/10:max(maxTimeRound);
+dt = 1/10; 
+dtuwb = mean(diff(uwb.time));
+if dt > dtuwb
+    dt = dtuwb;
+end
 
-uwb.x = interp1(uwb.time,uwb.coord.x,vecTime)';
-uwb.y = interp1(uwb.time,uwb.coord.y,vecTime)';
+vecTime = 0:dt:max(maxTimeRound);
+
+uwb.x = fillmissing(interp1(uwb.time,uwb.coord.x,vecTime)','movmedian',round(1/dt));
+uwb.y = fillmissing(interp1(uwb.time,uwb.coord.y,vecTime)','movmedian',round(1/dt));
 uwb.time = vecTime;
 
 opti.xDownSampled = interp1(opti.time,opti.coord.x,vecTime)';

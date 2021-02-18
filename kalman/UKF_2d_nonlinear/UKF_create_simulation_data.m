@@ -76,10 +76,10 @@ end
 
 function [position,velocity,acceleration,clean,tspecs] = generateAll()
 te = 10; %sec
-courtwidth = 2000; %mm
+courtwidth = 1500; %mm
 courtheigth = 5000; %mm
 
-fs = 8;  % position
+fs = 50;  % position
 fs2 = 100; % velocity
 
 [~,t,~] = createTemporalSpecs(fs,te);
@@ -93,7 +93,7 @@ clean.position.y = y;
 % [dt,t,n] = addJitter(fs,te);
 % [dt2,t2,n2] = addJitter(fs2,te);
 
-position.var.pos = 20000;
+position.var.pos = 10000;
 position.x = generate_signal(x, position.var.pos*2);
 position.y = generate_signal(y, position.var.pos*2);
 

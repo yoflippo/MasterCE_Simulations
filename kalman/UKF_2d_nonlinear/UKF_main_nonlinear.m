@@ -36,7 +36,7 @@ UKF_RTS_x = UKF_RTS_smooth(UKF_x, UKF_P, UKF_Q(ts.dt2),ts.dt2,weights);
 
 blVisiblePlots = 1; close all; name = replace(mfilename,'_','\_');
 RMSE1 = UKF_plot_results(ts,clean,position,UKF_x,velocity,[name],blVisiblePlots);
-UKF_plot_results_for_thesis(ts,clean,position,UKF_x,velocity,['fs = ' num2str(ts.fs)]);
+UKF_plot_results_for_thesis(ts,clean,position,UKF_x,velocity,['UWB update rate = ' num2str(ts.fs) ' Hz']);
 [RMSE2, RMSE_RAW] = UKF_plot_results(ts,clean,position,UKF_RTS_x,velocity,[name ' RTS'],blVisiblePlots);
 distFig; errors = [RMSE1 RMSE2 RMSE_RAW]
 % UKF_plot_residuals(position,residualsV,UKF_RTS_x)

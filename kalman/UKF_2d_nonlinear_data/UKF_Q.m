@@ -4,7 +4,7 @@ if not(exist('variance','var'))
     variance = 1;
 end
 
-posvar = 2;
+posvar = 0.5;
 Q = [posvar*dt  0.00    0  	  0       0       0.00       0.000;
      0          posvar*dt 0 	  0       0       0.00       0.000;
      0          0         dt^2	  0       0       0           0;
@@ -14,5 +14,21 @@ Q = [posvar*dt  0.00    0  	  0       0       0.00       0.000;
      0          0         0       0       0       0           1]*variance;
 
 Q = Q+triu(Q,-1).'; % make it symmetric
+
+% % %% Calculate system noise
+% % if not(exist('variance','var'))
+% %     variance = 1;
+% % end
+% % 
+% % posvar = 2;
+% % Q = [posvar*dt  0.00    0  	  0       0       0.00       0.000;
+% %      0          posvar*dt 0 	  0       0       0.00       0.000;
+% %      0          0         dt^2	  0       0       0           0;
+% %      0          0         0       dt^2    0       0           0;
+% %      0          0         0       0       0.1     0           0;
+% %      0          0         0       0       0       0.1*dt^2    0;
+% %      0          0         0       0       0       0           1]*variance;
+% % 
+% % Q = Q+triu(Q,-1).'; % make it symmetric
 end
 

@@ -1,8 +1,8 @@
-function [UKF_RTS_x,errors] = UKF_main_nonlinear(ap)
+function [errors,UKF_RTS_x] = UKF_main_nonlinear(ap)
 
 if not(exist('ap','var'))
     ap = [];
-    blVisiblePlots = 1;
+    blVisiblePlots = 0;
     close all;
 else
     blVisiblePlots = 0;
@@ -35,6 +35,7 @@ for i = 1:length(tVelocity)-1
     
     UKF_x(i,:) = x;
     UKF_P(i).M = P;
+    
     if cnt > length(tPosition)
         break
     end
@@ -46,6 +47,6 @@ name = replace(mfilename,'_','\_');
 RMSE1 = UKF_plot_results_data(ts,clean,position,UKF_x,velocity,[name],blVisiblePlots);
 [RMSE2, RMSERAW] = UKF_plot_results_data(ts,clean,position,UKF_RTS_x,velocity,[name ' RTS'],blVisiblePlots);
 distFig; 
-errors = [RMSE1 RMSE2 RMSERAW ((RMSE2-RMSERAW)/RMSERAW)];
+errors = round([RMSERAW RMSE1 RMSE2 ((RMSE1-RMSERAW)/RMSERAW)*100 ((RMSE2-RMSERAW)/RMSERAW)*100],1);
 % UKF_plot_residuals(position,residualsV,UKF_RTS_x)
 end
